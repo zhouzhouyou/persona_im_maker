@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fab_expanded">已展开</string>
+    <string name="fab_collapsed">已收起</string>
+
+    <!-- Sender Names -->
+    <string name="sender_ren">雨宫莲</string>
+    <string name="sender_ann">高卷杏</string>
+    <string name="sender_sadayo">川上贞代</string>
+    <string name="sender_becky">川上贞代（Becky）</string>
+    <string name="sender_tae">武见妙</string>
+    <string name="sender_caroline">卡萝莉娜</string>
+    <string name="sender_ryuji">坂本龙司</string>
+    <string name="sender_futaba">佐仓双叶</string>
+    <string name="sender_lala">拉拉·埃斯卡戈</string>
+    <string name="sender_makoto">新岛真</string>
+    <string name="sender_haru">奥村春</string>
+    <string name="sender_yusuke">喜多川佑介</string>
+    <string name="sender_goro">明智吾郎</string>
+    <string name="sender_chihaya">御船千早</string>
+    <string name="sender_munehisa">岩井宗久</string>
+    <string name="sender_ichiko">大宅一子</string>
+    <string name="sender_shinya">织田信也</string>
+    <string name="sender_hifumi">东乡一二三</string>
+    <string name="sender_yuuki">三岛由辉</string>
+    <string name="sender_toranosuke">吉田寅之助</string>
+    <string name="sender_kasumi">芳泽霞</string>
+    <string name="sender_sumire">芳泽堇</string>
+    <string name="sender_takuto">丸喜拓人</string>
+    <string name="sender_justine">芮丝汀娜</string>
+    <string name="sender_alibaba">阿里巴巴</string>
+    <string name="sender_phantom_thieves">怪盗团</string>
+    <string name="sender_ore_no_beko">牛丼店</string>
+    <string name="sender_triple_seven">便利店</string>
+    <string name="sender_raffleshia">花店</string>
+    <string name="sender_sae">新岛冴</string>
+    <string name="sender_morgana">摩尔加纳</string>
+    <string name="sender_unknown">未知</string>
+</resources>

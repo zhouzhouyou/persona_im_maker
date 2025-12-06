@@ -1,0 +1,189 @@
+syntax = "proto3";
+
+option java_package = "com.yuri.im.proto";
+
+// IM message senders exists in game. 游戏中会出现在IM中的发送者。
+enum StandardMessageSender {
+  // fallback
+  SENDER_UNKNOWN = 0;
+
+  // Makoto Niijima. 新岛真
+  SENDER_MAKATO = 1;
+
+  // Haru Okumura. 奥村春
+  SENDER_HARU = 2;
+
+  // Yusuke Kitagawa. 喜多川佑介
+  SENDER_YUSUKE = 3;
+
+  // Ann Takamaki. 高卷杏
+  SENDER_ANN = 4;
+
+  // Ryuji Sakamoto. 坂本龙司
+  SENDER_RYUJI = 5;
+
+  // Goro Akechi. 明智吾郎
+  SENDER_GORO = 6;
+
+  // Futaba Sakura. 佐仓双叶
+  SENDER_FUTABA = 7;
+
+  // Chihaya Mifune. 御船千早
+  SENDER_CHIHAYA = 8;
+
+  // Munehisa Iwai. 岩井宗久
+  SENDER_MUNEHISA = 9;
+
+  // Tae Takemi. 武见妙
+  SENDER_TAE = 10;
+
+  // Sadayo Kawakami. 川上贞代
+  SENDER_SADAYO = 11;
+
+  // Sadayo Kawakami (Becky). 川上贞代（Becky）
+  SENDER_BECKY = 12;
+
+  // Ichiko Ohya. 大宅一子
+  SENDER_ICHIKO = 13;
+
+  // Shinya Oda. 织田信也
+  SENDER_SHINYA = 14;
+
+  // Hifumi Togo. 东乡一二三
+  SENDER_HIFUMI = 15;
+
+  // Yuuki Mishima. 三岛由辉
+  SENDER_YUUKI = 16;
+
+  // Toranosuke Yoshida. 吉田寅之助
+  SENDER_TORANOSUKE = 17;
+
+  // Kasumi Yoshizawa. 芳泽霞
+  SENDER_KASUMI = 18;
+
+  // Sumire Yoshizawa. 芳泽堇
+  SENDER_SUMIRE = 19;
+
+  // Takuto Maruki. 丸喜拓人
+  SENDER_TAKUTO = 20;
+
+  // Caroline. 卡萝莉娜
+  SENDER_CAROLINE = 21;
+
+  // Justine. 芮丝汀娜
+  SENDER_JUSTINE = 22;
+
+  // Lala Escargot. 拉拉・埃斯卡戈 (新宿酒吧 Crossroads 老板)
+  SENDER_LALA = 23;
+
+  // Alibaba. 阿里巴巴 （双叶）
+  SENDER_ALIBABA = 24;
+
+  // Phantom Thieves. 怪盗团
+  SENDER_PHANTOM_THIEVES = 25;
+
+  // Ore no Beko. 牛丼店
+  SENDER_ORE_NO_BEKO = 26;
+
+  // Triple Seven. 便利店
+  SENDER_TRIPLE_SEVEN = 27;
+
+  // Rafflesia. 花店
+  SENDER_RAFFLESHIA = 28;
+}
+
+// Build-in custom message sender. 内建的自定义发送者。
+enum BuildInCustomMessageSender {
+  // fallback
+  CUSTOM_SENDER_UNKNOWN = 0;
+
+  // Sae Niijima. 新岛冴
+  CUSTOM_SENDER_SAE = 1;
+
+  // Morogan. 摩尔加纳
+  CUSTOM_SENDER_MOROGAN = 2;
+}
+
+// Custom message sender. 自定义的发送者。
+message CustomMessageSender {
+  string resourceID = 1;
+}
+
+// Top-end area of message which marks the emotion, 消息右上角标记情绪的区域。
+enum EmotionMarker {
+  // fallback
+  EMOTION_MARKER_UNKNOWN = 0;
+
+  // None
+  EMOTION_MARKER_NONE = 1;
+
+  // Question mark. 问号. ?
+  EMOTION_MARKER_QUESTION_MARK = 2;
+
+  // Exclamation mark. 感叹号. !
+  EMOTION_MARKER_EXCLAMATION_MARK = 3;
+
+  // Double exclamation mark. 双感叹号. !!
+  EMOTION_MARKER_DOUBLE_EXCLAMATION_MARK = 4;
+
+  // Exclamation and question mark. 感叹号和问号. !?
+  EMOTION_MARKER_EXCLAMATION_AND_QUESTION_MARK = 5;
+}
+
+// Received message. 收到的消息。
+message ReceiveMessage {
+  // Sender of the message. 消息的发送者。
+  oneof sender {
+    StandardMessageSender standard = 1;
+    BuildInCustomMessageSender buildInCustom = 2;
+    CustomMessageSender custom = 3;
+  }
+
+  // emotion marker. 情绪标记
+  EmotionMarker emotionMarker = 4;
+
+  // Message content. 消息内容。
+  string content = 5;
+}
+
+// Editing message. 表示编辑中的消息
+message EditingMessage {
+
+}
+
+// Reply options. 回复选项。
+message ReplyOptions {
+  repeated string options = 1;
+}
+
+// Sent message. 发送的消息。
+message SendMessage {
+  oneof message {
+    // Plain text message. 普通文本消息。
+    string text = 1;
+    // Reply options message. 回复选项消息。
+    ReplyOptions replies = 2;
+  }
+}
+
+// Dialog message. 对话消息。
+message ChatMessage {
+  oneof message {
+    // Received message. 收到的消息。
+    ReceiveMessage receive = 1;
+    // Editing message. 编辑中的消息。
+    EditingMessage editing = 2;
+    // Sent message. 发送的消息。
+    SendMessage send = 3;
+  }
+}
+
+// Chat session. 对话。
+message ChatSession {
+  // Session ID. 会话ID。
+  int32 sessionID = 1;
+  // Chat alias. 对话别名。
+  string alias = 2;
+  // Dialog messages. 对话消息。
+  repeated ChatMessage messages = 3;
+}

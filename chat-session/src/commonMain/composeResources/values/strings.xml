@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ChatSessionEditorView -->
+    <string name="chat_session_name">Session Name</string>
+    <string name="btn_new">New</string>
+    <string name="btn_management_mode">Management Mode</string>
+    <string name="btn_exit_management_mode">Exit Management Mode</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_export">Export</string>
+    <string name="btn_import">Import</string>
+    <string name="dialog_title_new_entry">New Conversation</string>
+    <string name="dialog_title_edit_entry">Edit Conversation</string>
+    <string name="label_sender">Sender</string>
+    <string name="sender_self">Self</string>
+    <string name="sender_others">Others</string>
+    <string name="label_message_content">Message Content</string>
+    <string name="hint_message_content">Enter message content, max 140 chars</string>
+    <string name="btn_save_entry">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="list_title_conversations">Conversation List</string>
+    <string name="drag_handle">Drag Handle</string>
+    <string name="btn_edit">Edit</string>
+    <string name="btn_delete">Delete</string>
+    <string name="label_emotion_marker">Emotion Marker</string>
+
+    <string name="favorite_senders_edit_favorite_senders">Favorite Senders (%1$d / %2$d)</string>
+    <string name="favorite_senders_edit_all_senders">Available Senders</string>
+    <string name="title_favorite_sender_edit">Favorite Sender Edit</string>
+    <string name="toast_max_favorite_senders">Max favorite senders %1$d reached</string>
+    <string name="btn_add_favorite_sender">Add Favorite Sender</string>
+    <string name="btn_remove_favorite_sender">Remove Favorite Sender</string>
+
+    <string name="label_json_string">JSON</string>
+    <string name="paste_previous_exported_json_here">Paste previous exported JSON here</string>
+    <string name="failed_to_parse_json">Failed to parse JSON, exception: %1$s</string>
+    <string name="import_session_success">Import session success</string>
+    <string name="export_session_success">Export session success</string>
+    <string name="failed_to_export_session">Failed to export session, exception: %1$s</string>
+
+</resources>

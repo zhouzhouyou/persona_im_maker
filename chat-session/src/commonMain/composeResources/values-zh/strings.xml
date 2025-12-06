@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ChatSessionEditorView -->
+    <string name="chat_session_name">会话名称</string>
+    <string name="btn_new">新建</string>
+    <string name="btn_management_mode">管理模式</string>
+    <string name="btn_exit_management_mode">退出管理模式</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_export">导出</string>
+    <string name="btn_import">导入</string>
+    <string name="dialog_title_new_entry">新建对话</string>
+    <string name="dialog_title_edit_entry">编辑对话</string>
+    <string name="label_sender">发送者</string>
+    <string name="sender_self">自己</string>
+    <string name="sender_others">他人</string>
+    <string name="label_message_content">对话内容</string>
+    <string name="hint_message_content">请输入对话内容，最多140字</string>
+    <string name="btn_save_entry">保存</string>
+    <string name="btn_cancel">取消</string>
+    <string name="list_title_conversations">对话列表</string>
+    <string name="drag_handle">拖拽手柄</string>
+    <string name="btn_edit">编辑</string>
+    <string name="btn_delete">删除</string>
+    <string name="label_emotion_marker">情感标记</string>
+
+    <string name="favorite_senders_edit_favorite_senders">收藏发送者 (%1$d / %2$d)</string>
+    <string name="favorite_senders_edit_all_senders">所有发送者</string>
+    <string name="title_favorite_sender_edit">编辑收藏发送者</string>
+    <string name="toast_max_favorite_senders">最大收藏发送者数 %1$d 已达上限</string>
+    <string name="btn_add_favorite_sender">添加收藏发送者</string>
+    <string name="btn_remove_favorite_sender">删除收藏发送者</string>
+
+    <string name="paste_previous_exported_json_here">粘贴之前导出的JSON字符串</string>
+    <string name="label_json_string">JSON</string>
+    <string name="failed_to_parse_json">解析JSON字符串失败，异常：%1$s</string>
+    <string name="import_session_success">导入会话成功</string>
+    <string name="export_session_success">导出会话成功</string>
+    <string name="failed_to_export_session">导出会话失败，异常：%1$s</string>
+</resources>

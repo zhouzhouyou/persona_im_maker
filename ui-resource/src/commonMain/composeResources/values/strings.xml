@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fab_expanded">expanded</string>
+    <string name="fab_collapsed">collapsed</string>
+
+    <!-- Sender Names -->
+    <string name="sender_ren">Ren</string>
+    <string name="sender_ann">Ann</string>
+    <string name="sender_sadayo">Sadayo</string>
+    <string name="sender_becky">Becky</string>
+    <string name="sender_tae">Tae</string>
+    <string name="sender_caroline">Caroline</string>
+    <string name="sender_ryuji">Ryuji</string>
+    <string name="sender_futaba">Futaba</string>
+    <string name="sender_lala">Lala</string>
+    <string name="sender_makoto">Makoto</string>
+    <string name="sender_haru">Haru</string>
+    <string name="sender_yusuke">Yusuke</string>
+    <string name="sender_goro">Goro</string>
+    <string name="sender_chihaya">Chihaya</string>
+    <string name="sender_munehisa">Munehisa</string>
+    <string name="sender_ichiko">Ichiko</string>
+    <string name="sender_shinya">Shinya</string>
+    <string name="sender_hifumi">Hifumi</string>
+    <string name="sender_yuuki">Yuuki</string>
+    <string name="sender_toranosuke">Toranosuke</string>
+    <string name="sender_kasumi">Kasumi</string>
+    <string name="sender_sumire">Sumire</string>
+    <string name="sender_takuto">Takuto</string>
+    <string name="sender_justine">Justine</string>
+    <string name="sender_alibaba">Alibaba</string>
+    <string name="sender_phantom_thieves">Phantom Thieves</string>
+    <string name="sender_ore_no_beko">Ore No Beko</string>
+    <string name="sender_triple_seven">Triple Seven</string>
+    <string name="sender_raffleshia">Raffleshia</string>
+    <string name="sender_sae">Sae</string>
+    <string name="sender_morgana">Morgana</string>
+    <string name="sender_unknown">Unknown</string>
+</resources>
