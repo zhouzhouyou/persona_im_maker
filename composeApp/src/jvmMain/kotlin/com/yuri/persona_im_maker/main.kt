@@ -10,7 +10,7 @@ fun main() {
     application {
         Window(
             onCloseRequest = ::exitApplication,
-            title = "personal_im_maker",
+            title = "persona_im_maker",
         ) {
             App()
         }
