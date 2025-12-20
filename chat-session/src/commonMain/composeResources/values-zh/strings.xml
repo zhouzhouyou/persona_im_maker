@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ChatSessionEditorView -->
+    <string name="chat_session_editor">对话编辑器</string>
     <string name="chat_session_name">会话名称</string>
     <string name="btn_new">新建</string>
     <string name="btn_management_mode">管理模式</string>
@@ -36,4 +37,9 @@
     <string name="import_session_success">导入会话成功</string>
     <string name="export_session_success">导出会话成功</string>
     <string name="failed_to_export_session">导出会话失败，异常：%1$s</string>
+
+    <string name="background_particle">背景粒子</string>
+    <string name="background_particle_none">无</string>
+    <string name="background_particle_sakura">樱花</string>
+    <string name="background_particle_snowflake">雪花</string>
 </resources>

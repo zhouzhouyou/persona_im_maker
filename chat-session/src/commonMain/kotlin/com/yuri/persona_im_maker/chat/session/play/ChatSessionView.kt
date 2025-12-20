@@ -20,10 +20,12 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
+import codes.chrishorner.personasns.BackgroundParticles
 import codes.chrishorner.personasns.PersonaRed
 import codes.chrishorner.personasns.Portraits
 import codes.chrishorner.personasns.Transcript
 import codes.chrishorner.personasns.rememberTranscriptState
+import com.yuri.im.schema.BackgroundParticle
 import com.yuri.im.schema.ChatSession
 import com.yuri.im.schema.ReceiveMessage
 import com.yuri.im.ui.resource.MyResourcePack
@@ -64,6 +66,8 @@ fun ChatSessionView(
             .focusRequester(focusRequester)
             .clickable(onClick = transcriptState::advance, indication = null, interactionSource = interactionSource)
     ) {
+        BackgroundParticles(chatSession.backgroundParticle)
+
         Transcript(
             transcriptState.entries,
         )
