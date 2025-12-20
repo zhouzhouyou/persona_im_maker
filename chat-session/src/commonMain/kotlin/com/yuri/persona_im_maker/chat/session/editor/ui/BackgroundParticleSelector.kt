@@ -17,6 +17,7 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,12 +40,16 @@ internal fun BackgroundParticleSelector(
     select: (BackgroundParticle) -> Unit
 ) {
     val options = listOf(BackgroundParticle.NONE, BackgroundParticle.SAKURA, BackgroundParticle.SNOWFLAKE)
-    val optionStrings = options.map {
+    val optionStrings = options.associateWith {
         stringResource(getBackgroundParticleName(it))
     }
     var expanded by remember { mutableStateOf(false) }
 
-    val textFieldState = rememberTextFieldState(stringResource(getBackgroundParticleName(current)))
+    val textFieldState = rememberTextFieldState("")
+
+    LaunchedEffect(current) {
+        textFieldState.setTextAndPlaceCursorAtEnd(optionStrings[current]!!)
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -81,9 +86,8 @@ internal fun BackgroundParticleSelector(
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     },
-                    selected = current == BackgroundParticle.NONE,
+                    selected = current == option,
                     onClick = {
-                        textFieldState.setTextAndPlaceCursorAtEnd(optionStrings[index])
                         select(option)
                     },
                     checkedLeadingIcon = { Icon(MyIconPack.Check, contentDescription = null) },
