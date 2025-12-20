@@ -72,7 +72,8 @@ fun ChatSessionView(
             Image(
                 painter = rememberVectorPainter(MyResourcePack.Sns),
                 contentDescription = null,
-                modifier = Modifier.height(100.dp).offset(x = 8.dp, y = (-4).dp))
+                modifier = Modifier.height(100.dp).offset(x = 8.dp, y = (-4).dp).clickable(onClick = navBack)
+            )
 
             Portraits(
                 senders = chatSession.messages.filterIsInstance<ReceiveMessage>().map { it.sender }.distinct(),
