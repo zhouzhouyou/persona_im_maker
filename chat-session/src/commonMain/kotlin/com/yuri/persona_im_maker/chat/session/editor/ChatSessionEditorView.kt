@@ -1,9 +1,11 @@
 package com.yuri.persona_im_maker.chat.session.editor
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalClipboard
@@ -18,6 +20,7 @@ import com.yuri.persona.im.task.state.ErrorOf
 import com.yuri.persona.im.task.state.Idle
 import com.yuri.persona.im.task.state.ProgressOf
 import com.yuri.persona_im_maker.chat.session.*
+import com.yuri.persona_im_maker.chat.session.editor.ui.BackgroundParticleSelector
 import com.yuri.persona_im_maker.chat.session.editor.ui.ChatMessageDialogState
 import com.yuri.persona_im_maker.chat.session.editor.ui.ChatMessageDialogWrapper
 import com.yuri.persona_im_maker.chat.session.editor.ui.ChatMessageList
@@ -90,12 +93,14 @@ fun ChatSessionEditorView(
             Cancelled -> {
                 importSessionDialogState = ImportSessionDialogState.None
             }
+
             Idle -> {}
             is ProgressOf<*> -> {}
             is DataOf<*> -> {
                 importSessionDialogState = ImportSessionDialogState.None
                 snackbarHostState.showSnackbar(getString(ChatSessionRes.string.import_session_success))
             }
+
             is ErrorOf<*> -> {}
         }
     }
@@ -105,9 +110,16 @@ fun ChatSessionEditorView(
             is DataOf -> {
                 snackbarHostState.showSnackbar(getString(ChatSessionRes.string.export_session_success))
             }
+
             is ErrorOf -> {
-                snackbarHostState.showSnackbar(getString(ChatSessionRes.string.failed_to_export_session, taskState.error))
+                snackbarHostState.showSnackbar(
+                    getString(
+                        ChatSessionRes.string.failed_to_export_session,
+                        taskState.error
+                    )
+                )
             }
+
             else -> {
 
             }
@@ -118,13 +130,7 @@ fun ChatSessionEditorView(
         topBar = {
             TopAppBar(
                 title = {
-                    TextField(
-                        value = state.name,
-                        onValueChange = { model.sendUIEvent(ChatSessionEditorUIEvent.UpdateName(it)) },
-                        label = { Text(stringResource(ChatSessionRes.string.chat_session_name)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
+                    Text(stringResource(ChatSessionRes.string.chat_session_editor))
                 },
                 actions = {
                     IconButton(
@@ -189,6 +195,26 @@ fun ChatSessionEditorView(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextField(
+                    value = state.name,
+                    onValueChange = { model.sendUIEvent(ChatSessionEditorUIEvent.UpdateName(it)) },
+                    label = { Text(stringResource(ChatSessionRes.string.chat_session_name)) },
+                    modifier = Modifier,
+                    singleLine = true
+                )
+
+                BackgroundParticleSelector(
+                    current = state.backgroundParticle,
+                    select = {
+                        model.sendUIEvent(ChatSessionEditorUIEvent.UpdateBackgroundParticle(it))
+                    }
+                )
+            }
+
             Text(
                 text = stringResource(ChatSessionRes.string.list_title_conversations),
                 style = MaterialTheme.typography.headlineSmall,
@@ -208,7 +234,6 @@ fun ChatSessionEditorView(
                     }
                 }
             )
-
         }
     }
 

@@ -39,6 +39,7 @@ data class SnackbarMessage(
 data class ChatSessionEditorViewState(
     val id: String,
     val name: String,
+    val backgroundParticle: BackgroundParticle = BackgroundParticle.NONE,
     val entries: List<ChatSessionEntry> = emptyList(),
     val favoriteSenders: List<MessageSender> = emptyList(),
     val snackbarMessage: SnackbarMessage? = null,
@@ -55,6 +56,10 @@ sealed interface ChatSessionEditorViewEvent : ViewEvent {
 
     data class UpdateName(
         val name: String
+    ) : ChatSessionEditorViewEvent
+
+    data class UpdateBackgroundParticle(
+        val backgroundParticle: BackgroundParticle
     ) : ChatSessionEditorViewEvent
 
     data class UpdateFavoriteSenders(
@@ -120,6 +125,10 @@ sealed interface ChatSessionEditorUIEvent : UIEvent {
     data class ImportSession(val jsonString: String) : ChatSessionEditorUIEvent
 
     data object IdleImportSessionValidate : ChatSessionEditorUIEvent
+
+    data class UpdateBackgroundParticle(
+        val backgroundParticle: BackgroundParticle
+    ) : ChatSessionEditorUIEvent
 }
 
 private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorViewEvent> { previousState, event ->
@@ -150,6 +159,10 @@ private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorVie
 
         is ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState -> {
             previousState.copy(exportSessionJsonValidateTaskState = event.taskState)
+        }
+
+        is ChatSessionEditorViewEvent.UpdateBackgroundParticle -> {
+            previousState.copy(backgroundParticle = event.backgroundParticle)
         }
     }
 }
@@ -196,6 +209,10 @@ class ChatSessionEditorViewModel(
         when (val chatSessionResp = chatSessionRepo.get(currentSessionID)) {
             is DataOf -> {
                 updateEntries(chatSessionResp.data.mapToChatSessionEntryList())
+                sendEvent(
+                    ChatSessionEditorViewEvent.UpdateBackgroundParticle(chatSessionResp.data.backgroundParticle)
+                )
+                sendEvent(ChatSessionEditorViewEvent.UpdateName(chatSessionResp.data.alias))
             }
 
             else -> {
@@ -255,6 +272,7 @@ class ChatSessionEditorViewModel(
         val chatSession = ChatSession(
             sessionID = state.value.id, // 暂时使用0，后续可以从持久化存储中获取
             alias = state.value.name,
+            backgroundParticle = state.value.backgroundParticle,
             messages = state.value.entries.map {
                 when (val sender = it.sender) {
                     MessageSenderSelf -> {
@@ -436,6 +454,12 @@ class ChatSessionEditorViewModel(
             ChatSessionEditorUIEvent.IdleImportSessionValidate -> {
                 sendEvent(
                     ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState(Idle)
+                )
+            }
+
+            is ChatSessionEditorUIEvent.UpdateBackgroundParticle -> {
+                sendEvent(
+                    ChatSessionEditorViewEvent.UpdateBackgroundParticle(event.backgroundParticle)
                 )
             }
         }

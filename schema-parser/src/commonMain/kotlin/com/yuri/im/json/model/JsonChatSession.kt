@@ -21,12 +21,15 @@ internal data class JsonChatSession(
     val messages: List<JsonChatMessage>,
     @SerialName("schemaVersion")
     val schemaVersion: Int,
+    @SerialName("backgroundParticle")
+    val backgroundParticle: JsonBackgroundParticle,
 ) {
     fun toModel(): ChatSession {
         return ChatSession(
             sessionID,
             alias,
             messages.map { it.toModel() },
+            backgroundParticle.toModel(),
         )
     }
 }
@@ -36,7 +39,8 @@ internal fun ChatSession.toDto(): JsonChatSession {
         sessionID,
         alias,
         messages.map { it.toDto() },
-        CURRENT_SCHEMA_VERSION
+        CURRENT_SCHEMA_VERSION,
+        backgroundParticle.toDto(),
     )
 }
 

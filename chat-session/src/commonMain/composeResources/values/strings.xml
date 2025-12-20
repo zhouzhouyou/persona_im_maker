@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ChatSessionEditorView -->
+    <string name="chat_session_editor">Chat Session Editor</string>
     <string name="chat_session_name">Session Name</string>
     <string name="btn_new">New</string>
     <string name="btn_management_mode">Management Mode</string>
@@ -36,5 +37,10 @@
     <string name="import_session_success">Import session success</string>
     <string name="export_session_success">Export session success</string>
     <string name="failed_to_export_session">Failed to export session, exception: %1$s</string>
+
+    <string name="background_particle">Background Particle</string>
+    <string name="background_particle_none">None</string>
+    <string name="background_particle_sakura">Sakura</string>
+    <string name="background_particle_snowflake">Snowflake</string>
 
 </resources>

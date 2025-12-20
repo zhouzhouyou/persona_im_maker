@@ -41,6 +41,7 @@ fun App() {
                     sessionID = "1",
                     alias = "",
                     messages = messages,
+                    backgroundParticle = BackgroundParticle.SNOWFLAKE
                 )
             )
             loading = false
