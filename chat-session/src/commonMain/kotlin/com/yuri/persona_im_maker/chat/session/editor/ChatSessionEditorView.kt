@@ -2,6 +2,8 @@ package com.yuri.persona_im_maker.chat.session.editor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,6 +31,7 @@ import com.yuri.persona_im_maker.chat.session.editor.ui.FavoriteSenderEditDialog
 import com.yuri.persona_im_maker.chat.session.editor.ui.FloatingActionButton
 import com.yuri.persona_im_maker.chat.session.editor.ui.ImportSessionDialog
 import com.yuri.persona_im_maker.chat.session.editor.ui.ImportSessionDialogState
+import com.yuri.persona_im_maker.chat.session.editor.ui.MyAdaptiveLazyVerticalGrid
 import com.yuri.persona_im_maker.utils.createClipEntryWithPlainText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -195,24 +198,29 @@ fun ChatSessionEditorView(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 200.dp),
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                TextField(
-                    value = state.name,
-                    onValueChange = { model.sendUIEvent(ChatSessionEditorUIEvent.UpdateName(it)) },
-                    label = { Text(stringResource(ChatSessionRes.string.chat_session_name)) },
-                    modifier = Modifier,
-                    singleLine = true
-                )
+                item {
+                    TextField(
+                        value = state.name,
+                        onValueChange = { model.sendUIEvent(ChatSessionEditorUIEvent.UpdateName(it)) },
+                        label = { Text(stringResource(ChatSessionRes.string.chat_session_name)) },
+                        modifier = Modifier,
+                        singleLine = true
+                    )
+                }
 
-                BackgroundParticleSelector(
-                    current = state.backgroundParticle,
-                    select = {
-                        model.sendUIEvent(ChatSessionEditorUIEvent.UpdateBackgroundParticle(it))
-                    }
-                )
+                item {
+                    BackgroundParticleSelector(
+                        current = state.backgroundParticle,
+                        select = {
+                            model.sendUIEvent(ChatSessionEditorUIEvent.UpdateBackgroundParticle(it))
+                        }
+                    )
+                }
             }
 
             Text(
