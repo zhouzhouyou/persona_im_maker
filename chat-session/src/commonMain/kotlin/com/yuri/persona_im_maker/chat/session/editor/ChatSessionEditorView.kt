@@ -1,37 +1,30 @@
 package com.yuri.persona_im_maker.chat.session.editor
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.yuri.im.schema.*
+import com.yuri.im.schema.BuildInCustomMessageSender
+import com.yuri.im.schema.MessageSenderSelf
+import com.yuri.im.schema.StandardMessageSender
 import com.yuri.im.ui.resource.icon.MyIconPack
 import com.yuri.im.ui.resource.icon.myiconpack.*
-import com.yuri.persona.im.task.state.Cancelled
-import com.yuri.persona.im.task.state.DataOf
-import com.yuri.persona.im.task.state.ErrorOf
-import com.yuri.persona.im.task.state.Idle
-import com.yuri.persona.im.task.state.ProgressOf
+import com.yuri.persona.im.task.state.*
 import com.yuri.persona_im_maker.chat.session.*
-import com.yuri.persona_im_maker.chat.session.editor.ui.BackgroundParticleSelector
-import com.yuri.persona_im_maker.chat.session.editor.ui.ChatMessageDialogState
-import com.yuri.persona_im_maker.chat.session.editor.ui.ChatMessageDialogWrapper
-import com.yuri.persona_im_maker.chat.session.editor.ui.ChatMessageList
-import com.yuri.persona_im_maker.chat.session.editor.ui.FavoriteSenderEditDialog
-import com.yuri.persona_im_maker.chat.session.editor.ui.FavoriteSenderEditDialogState
-import com.yuri.persona_im_maker.chat.session.editor.ui.FloatingActionButton
-import com.yuri.persona_im_maker.chat.session.editor.ui.ImportSessionDialog
-import com.yuri.persona_im_maker.chat.session.editor.ui.ImportSessionDialogState
+import com.yuri.persona_im_maker.chat.session.editor.ui.*
 import com.yuri.persona_im_maker.utils.createClipEntryWithPlainText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -155,21 +148,25 @@ fun ChatSessionEditorView(
                             )
                         )
                     }
-//                    IconButton(onClick = {
-//                        model.sendUIEvent(ChatSessionEditorUIEvent.Save)
-//                    }) {
-//                        Icon(MyIconPack.Save, contentDescription = stringResource(ChatSessionRes.string.btn_save))
-//                    }
-                    IconButton(onClick = {
-                        model.sendUIEvent(ChatSessionEditorUIEvent.ExportSession)
-                    }, enabled = state.exportSessionJsonValidateTaskState !is ProgressOf) {
-                        Icon(MyIconPack.Export, contentDescription = stringResource(ChatSessionRes.string.btn_export))
-                    }
-                    IconButton(onClick = {
-                        importSessionDialogState = ImportSessionDialogState.Show
-                    }) {
-                        Icon(MyIconPack.Import, contentDescription = stringResource(ChatSessionRes.string.btn_import))
-                    }
+
+                    MoreMenuActions(
+                        listOf(
+                            MoreMenuAction.Action(
+                                text = ChatSessionRes.string.btn_export,
+                                leadingIcon = MyIconPack.Export,
+                                onClick = {
+                                    model.sendUIEvent(ChatSessionEditorUIEvent.ExportSession)
+                                }
+                            ),
+                            MoreMenuAction.Action(
+                                text = ChatSessionRes.string.btn_import,
+                                leadingIcon = MyIconPack.Import,
+                                onClick = {
+                                    importSessionDialogState = ImportSessionDialogState.Show
+                                }
+                            ),
+                        )
+                    )
                 }
             )
         },
@@ -195,24 +192,29 @@ fun ChatSessionEditorView(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 200.dp),
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                TextField(
-                    value = state.name,
-                    onValueChange = { model.sendUIEvent(ChatSessionEditorUIEvent.UpdateName(it)) },
-                    label = { Text(stringResource(ChatSessionRes.string.chat_session_name)) },
-                    modifier = Modifier,
-                    singleLine = true
-                )
+                item {
+                    TextField(
+                        value = state.name,
+                        onValueChange = { model.sendUIEvent(ChatSessionEditorUIEvent.UpdateName(it)) },
+                        label = { Text(stringResource(ChatSessionRes.string.chat_session_name)) },
+                        modifier = Modifier,
+                        singleLine = true
+                    )
+                }
 
-                BackgroundParticleSelector(
-                    current = state.backgroundParticle,
-                    select = {
-                        model.sendUIEvent(ChatSessionEditorUIEvent.UpdateBackgroundParticle(it))
-                    }
-                )
+                item {
+                    BackgroundParticleSelector(
+                        current = state.backgroundParticle,
+                        select = {
+                            model.sendUIEvent(ChatSessionEditorUIEvent.UpdateBackgroundParticle(it))
+                        }
+                    )
+                }
             }
 
             Text(
@@ -264,6 +266,53 @@ fun ChatSessionEditorView(
             model.sendUIEvent(ChatSessionEditorUIEvent.IdleImportSessionValidate)
         }
     )
+}
+
+sealed interface MoreMenuAction {
+    data class Action(
+        val text: StringResource,
+        val leadingIcon: ImageVector? = null,
+        val trailingIcon: ImageVector? = null,
+        val onClick: () -> Unit,
+    ): MoreMenuAction
+
+    data object HorizontalDivider: MoreMenuAction
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun MoreMenuActions(menuActionList: List<MoreMenuAction>) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(MyIconPack.MoreVert, contentDescription = null)
+        }
+
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            menuActionList.forEach {
+                when (it) {
+                    is MoreMenuAction.Action -> {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(it.text))},
+                            onClick = it.onClick,
+                            leadingIcon = it.leadingIcon?.run { {
+                                Icon(this, contentDescription = null)
+                            } },
+                            trailingIcon = it.trailingIcon?.run {
+                                {
+                                    Icon(this, contentDescription = null)
+                                }
+                            }
+                        )
+                    }
+                    MoreMenuAction.HorizontalDivider -> HorizontalDivider()
+                }
+            }
+        }
+    }
 }
 
 private val allSenders = buildList {
