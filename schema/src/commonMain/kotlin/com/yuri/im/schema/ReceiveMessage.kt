@@ -8,7 +8,7 @@ package com.yuri.im.schema
  * @property content 消息内容
  */
 data class ReceiveMessage(
-    val sender: ReceivedMessageSender,
+    override val sender: ReceivedMessageSender,
     override val emotionMarker: EmotionMarker = EmotionMarker.EMOTION_MARKER_NONE,
     val content: String
 ): ChatMessage {

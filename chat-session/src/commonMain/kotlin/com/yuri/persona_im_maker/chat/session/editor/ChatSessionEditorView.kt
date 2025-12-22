@@ -42,8 +42,8 @@ fun ChatSessionEditorView(
         mutableStateOf(false)
     }
 
-    var dialogState: ChatMessageDialogState by remember {
-        mutableStateOf(ChatMessageDialogState.None)
+    var dialogState: ChatMessageEditScreenState by remember {
+        mutableStateOf(ChatMessageEditScreenState.None)
     }
 
     var favoriteSenderEditDialogState: FavoriteSenderEditDialogState by remember {
@@ -136,7 +136,7 @@ fun ChatSessionEditorView(
                         Icon(MyIconPack.Play, contentDescription = null)
                     }
                     IconButton(onClick = {
-                        dialogState = ChatMessageDialogState.New(MessageSenderSelf)
+                        dialogState = ChatMessageEditScreenState.New(MessageSenderSelf)
                     }) {
                         Icon(MyIconPack.Add, contentDescription = stringResource(ChatSessionRes.string.btn_new))
                     }
@@ -182,7 +182,7 @@ fun ChatSessionEditorView(
                     favoriteSenderEditDialogState = FavoriteSenderEditDialogState.Modify(state.favoriteSenders)
                 },
                 onClick = {
-                    dialogState = ChatMessageDialogState.New(it)
+                    dialogState = ChatMessageEditScreenState.New(it)
                 }
             )
         }
@@ -228,7 +228,7 @@ fun ChatSessionEditorView(
                 isManagementMode = isManagementMode,
                 onDelete = { model.sendUIEvent(ChatSessionEditorUIEvent.DeleteEntry(it.id)) },
                 onEdit = {
-                    dialogState = ChatMessageDialogState.Modify(it)
+                    dialogState = ChatMessageEditScreenState.Modify(it)
                 },
                 onMove = { startIndex, endIndex ->
                     state.entries.getOrNull(startIndex)?.let {
@@ -239,10 +239,10 @@ fun ChatSessionEditorView(
         }
     }
 
-    ChatMessageDialogWrapper(
+    ChatMessageEditScreenWrapper(
         dialogState = dialogState,
         allSenders = allSenders,
-        closeEntryDialog = { dialogState = ChatMessageDialogState.None },
+        closeEntryDialog = { dialogState = ChatMessageEditScreenState.None },
         sendUIEvent = model::sendUIEvent
     )
 

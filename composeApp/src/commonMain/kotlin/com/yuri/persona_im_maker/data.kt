@@ -3,6 +3,7 @@ package com.yuri.persona_im_maker
 import com.yuri.im.schema.EmotionMarker
 import com.yuri.im.schema.PlainText
 import com.yuri.im.schema.ReceiveMessage
+import com.yuri.im.schema.ReplyOptions
 import com.yuri.im.schema.StandardMessageSender
 
 val messages = listOf(
@@ -11,8 +12,8 @@ val messages = listOf(
         content = "Hello!",
         emotionMarker = EmotionMarker.EMOTION_MARKER_EXCLAMATION_MARK
     ),
-    PlainText(
-        text = "你好",
+    ReplyOptions(
+        options = listOf("你好", "hello"),
     ),
     ReceiveMessage(
         sender = StandardMessageSender.SENDER_CAROLINE,

@@ -26,9 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yuri.im.schema.MessageSenderSelf
+import com.yuri.im.schema.PlainText
+import com.yuri.im.schema.ReceiveMessage
+import com.yuri.im.schema.ReplyOptions
 import com.yuri.im.ui.resource.icon.MyIconPack
 import com.yuri.im.ui.resource.icon.myiconpack.Delete
 import com.yuri.im.ui.resource.icon.myiconpack.Edit
@@ -98,12 +102,12 @@ fun ChatMessageCard(
 
             Box {
                 SenderImage(
-                    messageSender = entry.sender,
+                    messageSender = entry.chatMessage.sender,
                     modifier = Modifier.clip(MaterialTheme.shapes.medium).align(Alignment.Center)
                 )
 
-                if (entry.sender != MessageSenderSelf) {
-                    val emotionMarkerImageVector = ResourceUtil.getEmotionalMarkerImageVector(entry.emotionMarker)
+                if (entry.chatMessage.sender != MessageSenderSelf) {
+                    val emotionMarkerImageVector = ResourceUtil.getEmotionalMarkerImageVector(entry.chatMessage.emotionMarker)
                     if (emotionMarkerImageVector != null) {
                         Image(
                             painter = rememberVectorPainter(emotionMarkerImageVector),
@@ -123,11 +127,28 @@ fun ChatMessageCard(
             ) {
                 // 发送者名称
                 Text(
-                    text = ResourceUtil.getSenderStringResource(entry.sender),
+                    text = ResourceUtil.getSenderStringResource(entry.chatMessage.sender),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = entry.text,
+                    text = buildAnnotatedString {
+                      when (val chatMessage = entry.chatMessage) {
+                          is ReceiveMessage -> append(chatMessage.text)
+                          is PlainText -> append(chatMessage.text)
+                          is ReplyOptions -> {
+                              chatMessage.options.forEach {
+                                  appendLine(it)
+                              }
+                              // issue to be fixed in cmp
+//                              withBulletList {
+//
+//                              }
+                          }
+                          else -> {
+
+                          }
+                      }
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis

@@ -24,9 +24,7 @@ import kotlin.uuid.Uuid
 
 data class ChatSessionEntry(
     val id: Int,
-    val sender: MessageSender,
-    val text: String,
-    val emotionMarker: EmotionMarker,
+    val chatMessage: ChatMessage,
 )
 
 @OptIn(ExperimentalUuidApi::class)
@@ -90,16 +88,12 @@ sealed interface ChatSessionEditorUIEvent : UIEvent {
     ) : ChatSessionEditorUIEvent
 
     data class AddEntry(
-        val sender: MessageSender,
-        val text: String,
-        val emotionMarker: EmotionMarker
+        val chatMessage: ChatMessage,
     ) : ChatSessionEditorUIEvent
 
     data class ModifyEntry(
         val id: Int,
-        val sender: MessageSender,
-        val text: String,
-        val emotionMarker: EmotionMarker
+        val chatMessage: ChatMessage
     ) : ChatSessionEditorUIEvent
 
     data class DeleteEntry(
@@ -228,24 +222,7 @@ class ChatSessionEditorViewModel(
     private fun ChatMessage.mapToChatSessionEntry(): ChatSessionEntry {
         return ChatSessionEntry(
             id = entryID++,
-            sender = when (this) {
-                is EditingMessage -> {
-                    throw UnsupportedOperationException("Editing message is not supported")
-                }
-
-                is ReceiveMessage -> {
-                    sender
-                }
-
-                is PlainText, is ReplyOptions -> MessageSenderSelf
-            },
-            text = when (this) {
-                is PlainText -> text
-                is ReplyOptions -> options.joinToString("\n")
-                is ReceiveMessage -> content
-                else -> ""
-            },
-            emotionMarker = emotionMarker
+            chatMessage = this,
         )
     }
 
@@ -274,21 +251,7 @@ class ChatSessionEditorViewModel(
             alias = state.value.name,
             backgroundParticle = state.value.backgroundParticle,
             messages = state.value.entries.map {
-                when (val sender = it.sender) {
-                    MessageSenderSelf -> {
-                        PlainText(text = it.text)
-                    }
-
-                    is StandardMessageSender, is BuildInCustomMessageSender -> ReceiveMessage(
-                        sender = sender,
-                        content = it.text,
-                        emotionMarker = it.emotionMarker
-                    )
-
-                    is CustomMessageSender -> {
-                        TODO("Not Implemented")
-                    }
-                }
+               it.chatMessage
             }
         )
 
@@ -389,9 +352,7 @@ class ChatSessionEditorViewModel(
                 updateEntries(
                     state.value.entries + ChatSessionEntry(
                         id = entryID++,
-                        sender = event.sender,
-                        text = event.text,
-                        emotionMarker = event.emotionMarker
+                        chatMessage = event.chatMessage
                     )
                 )
             }
@@ -407,9 +368,7 @@ class ChatSessionEditorViewModel(
                     state.value.entries.map {
                         if (it.id == event.id) {
                             it.copy(
-                                sender = event.sender,
-                                text = event.text,
-                                emotionMarker = event.emotionMarker
+                                chatMessage = event.chatMessage
                             )
                         } else {
                             it

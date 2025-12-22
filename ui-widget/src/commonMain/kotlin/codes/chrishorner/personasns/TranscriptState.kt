@@ -77,13 +77,21 @@ class TranscriptState internal constructor(
     private val _entries = mutableStateOf<List<Entry>>(emptyList())
     val entries: List<Entry> by _entries
 
-    fun advance() {
+    fun selectOption(index: Int) {
+        advance(index)
+    }
 
-        val messages = messagesState.advance()
+    fun advance(optionIndex: Int = 0) {
+
+        val (popLast, messages) = messagesState.advance(optionIndex)
 
         // If messages have looped back to the start, clear any saved states so we can start calculating
         // them again.
         if (messages.size == 1) entryStates.clear()
+
+        if (popLast) {
+            entryStates.removeLastOrNull()
+        }
 
         // Add a new EntryState to the collection to match the newly added Message. This state will be
         // updated on a subsequent call to advance().

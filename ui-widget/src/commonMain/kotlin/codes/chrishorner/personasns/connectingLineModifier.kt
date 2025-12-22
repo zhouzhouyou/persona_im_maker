@@ -10,12 +10,15 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
+import com.yuri.im.schema.ReplyOptions
 
 /**
  * Draws a black line from `entry` to `entry2` (if it exists).
  */
 fun Modifier.drawConnectingLine(entry1: Entry, entry2: Entry?, globalWidth: Int? = null): Modifier {
     if (entry2 == null) return this
+
+    if (entry2.message is ReplyOptions) return this
 
     return drawWithCache {
         val linePath = Path()
