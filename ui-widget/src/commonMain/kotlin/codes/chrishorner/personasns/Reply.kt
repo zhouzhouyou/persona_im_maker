@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 
 /**
  * A message sent in chat by the player.
@@ -31,12 +30,6 @@ fun Reply(entry: Entry, modifier: Modifier = Modifier) {
     contentAlignment = Alignment.CenterEnd,
     modifier = modifier
       .fillMaxWidth()
-        .onGloballyPositioned { layoutCoordinates ->
-            with(layoutCoordinates.size) {
-                val width = toSize().width
-                val height = toSize().height
-            }
-        }
       .padding(horizontal = 4.dp)
   ) {
     Text(
