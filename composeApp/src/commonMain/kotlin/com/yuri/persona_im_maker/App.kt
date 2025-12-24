@@ -40,7 +40,7 @@ fun App() {
                 ChatSession(
                     sessionID = "1",
                     alias = "",
-                    messages = messages,
+                    messages = messages2,
                     backgroundParticle = BackgroundParticle.SNOWFLAKE
                 )
             )

@@ -15,6 +15,7 @@
     <string name="sender_self">自己</string>
     <string name="sender_others">他人</string>
     <string name="label_message_content">对话内容</string>
+    <string name="label_message_options">对话选项</string>
     <string name="hint_message_content">请输入对话内容，最多140字</string>
     <string name="btn_save_entry">保存</string>
     <string name="btn_cancel">取消</string>
@@ -23,6 +24,7 @@
     <string name="btn_edit">编辑</string>
     <string name="btn_delete">删除</string>
     <string name="label_emotion_marker">情感标记</string>
+    <string name="btn_delete_all">清空</string>
 
     <string name="favorite_senders_edit_favorite_senders">收藏发送者 (%1$d / %2$d)</string>
     <string name="favorite_senders_edit_all_senders">所有发送者</string>

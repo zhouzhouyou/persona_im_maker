@@ -10,7 +10,10 @@ sealed interface SendMessage: ChatMessage {
 
 data class PlainText(
     override val text: String,
-): SendMessage
+): SendMessage {
+    override val sender: MessageSenderSelf
+        get() = MessageSenderSelf
+}
 
 /**
  * Reply options. 回复选项。
@@ -19,4 +22,7 @@ data class PlainText(
  */
 data class ReplyOptions(
     val options: List<String>,
-): SendMessage
+): SendMessage {
+    override val sender: MessageSenderSelf
+        get() = MessageSenderSelf
+}

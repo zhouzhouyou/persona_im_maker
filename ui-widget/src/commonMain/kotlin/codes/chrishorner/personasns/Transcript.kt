@@ -21,12 +21,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
+import com.yuri.im.schema.PlainText
+import com.yuri.im.schema.ReceiveMessage
+import com.yuri.im.schema.ReplyOptions
 
 /**
  * Scrollable list of messages - including the background line connecting each entry.
  */
 @Composable
-fun Transcript(entries: List<Entry>, modifier: Modifier = Modifier) {
+fun Transcript(entries: List<Entry>, modifier: Modifier = Modifier, selectOption: (Int) -> Unit) {
   val listState = rememberLazyListState()
   val totalItemCount by remember { derivedStateOf { listState.layoutInfo.totalItemsCount } }
 
@@ -58,16 +61,23 @@ fun Transcript(entries: List<Entry>, modifier: Modifier = Modifier) {
     itemsIndexed(
       items = entries,
     ) { index, entry ->
-        if (entry.message.fromSelf) {
-            Reply(
-                entry = entry,
-                modifier = Modifier.drawConnectingLine(entry, entries.getOrNull(index + 1), globalWidth)
-            )
-        } else {
-            Entry(
-                entry,
-                modifier = Modifier.drawConnectingLine(entry, entries.getOrNull(index + 1), globalWidth)
-            )
+        when (entry.message) {
+            is PlainText, is ReplyOptions -> {
+                Reply(
+                    entry = entry,
+                    modifier = Modifier.drawConnectingLine(entry, entries.getOrNull(index + 1), globalWidth),
+                    selectOption = selectOption
+                )
+            }
+            is ReceiveMessage -> {
+                Entry(
+                    entry,
+                    modifier = Modifier.drawConnectingLine(entry, entries.getOrNull(index + 1), globalWidth)
+                )
+            }
+            else -> {
+                // fixme: remove
+            }
         }
     }
 

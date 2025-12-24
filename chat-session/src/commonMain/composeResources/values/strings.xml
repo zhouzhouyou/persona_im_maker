@@ -15,6 +15,7 @@
     <string name="sender_self">Self</string>
     <string name="sender_others">Others</string>
     <string name="label_message_content">Message Content</string>
+    <string name="label_message_options">Message Options</string>
     <string name="hint_message_content">Enter message content, max 140 chars</string>
     <string name="btn_save_entry">Save</string>
     <string name="btn_cancel">Cancel</string>
@@ -23,6 +24,7 @@
     <string name="btn_edit">Edit</string>
     <string name="btn_delete">Delete</string>
     <string name="label_emotion_marker">Emotion Marker</string>
+    <string name="btn_delete_all">Delete All</string>
 
     <string name="favorite_senders_edit_favorite_senders">Favorite Senders (%1$d / %2$d)</string>
     <string name="favorite_senders_edit_all_senders">Available Senders</string>
