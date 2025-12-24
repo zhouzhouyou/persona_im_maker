@@ -123,6 +123,8 @@ sealed interface ChatSessionEditorUIEvent : UIEvent {
     data class UpdateBackgroundParticle(
         val backgroundParticle: BackgroundParticle
     ) : ChatSessionEditorUIEvent
+
+    data object DeleteAll : ChatSessionEditorUIEvent
 }
 
 private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorViewEvent> { previousState, event ->
@@ -420,6 +422,10 @@ class ChatSessionEditorViewModel(
                 sendEvent(
                     ChatSessionEditorViewEvent.UpdateBackgroundParticle(event.backgroundParticle)
                 )
+            }
+
+            ChatSessionEditorUIEvent.DeleteAll -> {
+                updateEntries(emptyList())
             }
         }
     }

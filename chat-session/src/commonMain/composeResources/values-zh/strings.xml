@@ -24,6 +24,7 @@
     <string name="btn_edit">编辑</string>
     <string name="btn_delete">删除</string>
     <string name="label_emotion_marker">情感标记</string>
+    <string name="btn_delete_all">清空</string>
 
     <string name="favorite_senders_edit_favorite_senders">收藏发送者 (%1$d / %2$d)</string>
     <string name="favorite_senders_edit_all_senders">所有发送者</string>

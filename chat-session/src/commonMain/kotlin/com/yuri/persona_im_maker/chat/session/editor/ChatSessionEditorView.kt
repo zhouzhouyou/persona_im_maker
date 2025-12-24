@@ -165,6 +165,14 @@ fun ChatSessionEditorView(
                                     importSessionDialogState = ImportSessionDialogState.Show
                                 }
                             ),
+                            MoreMenuAction.HorizontalDivider,
+                            MoreMenuAction.Action(
+                                text = ChatSessionRes.string.btn_delete_all,
+                                leadingIcon = MyIconPack.Delete,
+                                onClick = {
+                                    model.sendUIEvent(ChatSessionEditorUIEvent.DeleteAll)
+                                }
+                            )
                         )
                     )
                 }

@@ -24,6 +24,7 @@
     <string name="btn_edit">Edit</string>
     <string name="btn_delete">Delete</string>
     <string name="label_emotion_marker">Emotion Marker</string>
+    <string name="btn_delete_all">Delete All</string>
 
     <string name="favorite_senders_edit_favorite_senders">Favorite Senders (%1$d / %2$d)</string>
     <string name="favorite_senders_edit_all_senders">Available Senders</string>
