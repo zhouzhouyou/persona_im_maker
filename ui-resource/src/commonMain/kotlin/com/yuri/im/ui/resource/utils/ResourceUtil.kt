@@ -115,6 +115,7 @@ object ResourceUtil {
                 StandardMessageSender.SENDER_GORO -> BackgroundColors.BG_GORO
                 StandardMessageSender.SENDER_FUTABA -> BackgroundColors.BG_FUTABA
                 StandardMessageSender.SENDER_KASUMI -> BackgroundColors.BG_KASUMI
+                StandardMessageSender.SENDER_ALIBABA -> BackgroundColors.BG_ALIBABA
                 else -> BackgroundColors.BG_DEFAULT
             }
 
