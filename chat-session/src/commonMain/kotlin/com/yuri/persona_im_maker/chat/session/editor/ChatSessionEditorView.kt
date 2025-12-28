@@ -73,9 +73,9 @@ fun ChatSessionEditorView(
     }
 
     LaunchedEffect(state.setToClipboardContent) {
-        if (state.setToClipboardContent != null) {
+        state.setToClipboardContent?.let {
             coroutineScope.launch(Dispatchers.Main) {
-                clipboard.setClipEntry(createClipEntryWithPlainText(state.setToClipboardContent!!))
+                clipboard.setClipEntry(createClipEntryWithPlainText(it))
                 model.sendUIEvent(ChatSessionEditorUIEvent.ClearSetToClipboardContent)
             }
         }
@@ -91,31 +91,9 @@ fun ChatSessionEditorView(
             is ProgressOf<*> -> {}
             is DataOf<*> -> {
                 importSessionDialogState = ImportSessionDialogState.None
-                snackbarHostState.showSnackbar(getString(ChatSessionRes.string.import_session_success))
             }
 
             is ErrorOf<*> -> {}
-        }
-    }
-
-    LaunchedEffect(state.exportSessionJsonValidateTaskState) {
-        when (val taskState = state.exportSessionJsonValidateTaskState) {
-            is DataOf -> {
-                snackbarHostState.showSnackbar(getString(ChatSessionRes.string.export_session_success))
-            }
-
-            is ErrorOf -> {
-                snackbarHostState.showSnackbar(
-                    getString(
-                        ChatSessionRes.string.failed_to_export_session,
-                        taskState.error
-                    )
-                )
-            }
-
-            else -> {
-
-            }
         }
     }
 

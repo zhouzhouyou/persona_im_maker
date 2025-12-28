@@ -43,7 +43,6 @@ data class ChatSessionEditorViewState(
     val snackbarMessage: SnackbarMessage? = null,
     // only string now
     val setToClipboardContent: String? = null,
-    val exportSessionJsonValidateTaskState: TaskState<Unit, Unit, String> = Idle,
     val importSessionJsonValidateTaskState: TaskState<Unit, Unit, String> = Idle
 ) : ViewState
 
@@ -66,10 +65,6 @@ sealed interface ChatSessionEditorViewEvent : ViewEvent {
 
     data class UpdateSnackbar(
         val message: SnackbarMessage?
-    ) : ChatSessionEditorViewEvent
-
-    data class ExportSessionJsonValidateTaskState(
-        val taskState: TaskState<Unit, Unit, String>
     ) : ChatSessionEditorViewEvent
 
     data class UpdateSetToClipboardContent(
@@ -151,10 +146,6 @@ private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorVie
 
         is ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState -> {
             previousState.copy(importSessionJsonValidateTaskState = event.taskState)
-        }
-
-        is ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState -> {
-            previousState.copy(exportSessionJsonValidateTaskState = event.taskState)
         }
 
         is ChatSessionEditorViewEvent.UpdateBackgroundParticle -> {
@@ -296,22 +287,19 @@ class ChatSessionEditorViewModel(
     }
 
     private fun exportAsJson() = viewModelScope.launch(Dispatchers.Default) {
-        sendEvent(
-            ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState(ProgressOf(Unit))
-        )
+        // TODO: Add loading dialog support
         runCatching {
             val json = buildChatSessionJson()
             sendEvent(
                 ChatSessionEditorViewEvent.UpdateSetToClipboardContent(json)
             )
         }.onSuccess {
-            sendEvent(
-                ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState(DataOf(Unit))
-            )
+            toast(getString(ChatSessionRes.string.export_session_success))
         }.onFailure {
-            sendEvent(
-                ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState(ErrorOf(it.message ?: it.toString()))
-            )
+            toast(getString(
+                ChatSessionRes.string.failed_to_export_session,
+                it.message ?: it.toString()
+            ))
         }
 
     }
@@ -327,6 +315,7 @@ class ChatSessionEditorViewModel(
             sendEvent(
                 ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState(DataOf(Unit))
             )
+            toast(getString(ChatSessionRes.string.import_session_success))
             updateEntries(it.mapToChatSessionEntryList())
         }.onFailure {
             sendEvent(
