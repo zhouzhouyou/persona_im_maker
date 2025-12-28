@@ -5,15 +5,8 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.Settings
 import com.yuri.im.json.JsonSerialUtil
 import com.yuri.im.schema.*
-import com.yuri.persona.im.task.state.Cancelled
-import com.yuri.persona.im.task.state.DataOf
-import com.yuri.persona.im.task.state.ErrorOf
-import com.yuri.persona.im.task.state.Idle
-import com.yuri.persona.im.task.state.ProgressOf
-import com.yuri.persona.im.task.state.TaskState
+import com.yuri.persona.im.task.state.*
 import com.yuri.persona.mvi.*
-import com.yuri.persona_im_maker.chat.session.ChatSessionRepo
-import com.yuri.persona_im_maker.chat.session.ChatSessionRes
 import com.yuri.persona_im_maker.chat.session.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,17 +30,21 @@ data class SnackbarMessage(
 data class ChatSessionEditorViewState(
     val id: String,
     val name: String,
+    val initializing: Boolean = false,
     val backgroundParticle: BackgroundParticle = BackgroundParticle.NONE,
     val entries: List<ChatSessionEntry> = emptyList(),
     val favoriteSenders: List<MessageSender> = emptyList(),
     val snackbarMessage: SnackbarMessage? = null,
     // only string now
     val setToClipboardContent: String? = null,
-    val exportSessionJsonValidateTaskState: TaskState<Unit, Unit, String> = Idle,
     val importSessionJsonValidateTaskState: TaskState<Unit, Unit, String> = Idle
 ) : ViewState
 
 sealed interface ChatSessionEditorViewEvent : ViewEvent {
+    data class UpdateInitializing(
+        val initializing: Boolean
+    ) : ChatSessionEditorViewEvent
+
     data class UpdateEntries(
         val entries: List<ChatSessionEntry>
     ) : ChatSessionEditorViewEvent
@@ -66,10 +63,6 @@ sealed interface ChatSessionEditorViewEvent : ViewEvent {
 
     data class UpdateSnackbar(
         val message: SnackbarMessage?
-    ) : ChatSessionEditorViewEvent
-
-    data class ExportSessionJsonValidateTaskState(
-        val taskState: TaskState<Unit, Unit, String>
     ) : ChatSessionEditorViewEvent
 
     data class UpdateSetToClipboardContent(
@@ -129,6 +122,10 @@ sealed interface ChatSessionEditorUIEvent : UIEvent {
 
 private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorViewEvent> { previousState, event ->
     when (event) {
+        is ChatSessionEditorViewEvent.UpdateInitializing -> {
+            previousState.copy(initializing = event.initializing)
+        }
+
         is ChatSessionEditorViewEvent.UpdateEntries -> {
             previousState.copy(entries = event.entries)
         }
@@ -153,10 +150,6 @@ private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorVie
             previousState.copy(importSessionJsonValidateTaskState = event.taskState)
         }
 
-        is ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState -> {
-            previousState.copy(exportSessionJsonValidateTaskState = event.taskState)
-        }
-
         is ChatSessionEditorViewEvent.UpdateBackgroundParticle -> {
             previousState.copy(backgroundParticle = event.backgroundParticle)
         }
@@ -169,7 +162,7 @@ class ChatSessionEditorViewModel(
     private val chatSessionRepo: ChatSessionRepo,
     private val currentSessionID: String? = null,
     initialState: ChatSessionEditorViewState = ChatSessionEditorViewState(
-        id = currentSessionID ?: Uuid.random().toHexString(), name = ""
+        id = currentSessionID ?: Uuid.random().toHexString(), name = "", initializing = currentSessionID != null,
     ),
     reducer: Reducer<ChatSessionEditorViewState, ChatSessionEditorViewEvent> = myReducer
 ) : BaseViewModel<ChatSessionEditorViewState, ChatSessionEditorViewEvent, ChatSessionEditorUIEvent>(
@@ -209,6 +202,8 @@ class ChatSessionEditorViewModel(
                     ChatSessionEditorViewEvent.UpdateBackgroundParticle(chatSessionResp.data.backgroundParticle)
                 )
                 sendEvent(ChatSessionEditorViewEvent.UpdateName(chatSessionResp.data.alias))
+
+                sendEvent(ChatSessionEditorViewEvent.UpdateInitializing(false))
             }
 
             else -> {
@@ -296,22 +291,19 @@ class ChatSessionEditorViewModel(
     }
 
     private fun exportAsJson() = viewModelScope.launch(Dispatchers.Default) {
-        sendEvent(
-            ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState(ProgressOf(Unit))
-        )
+        // TODO: Add loading dialog support
         runCatching {
             val json = buildChatSessionJson()
             sendEvent(
                 ChatSessionEditorViewEvent.UpdateSetToClipboardContent(json)
             )
         }.onSuccess {
-            sendEvent(
-                ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState(DataOf(Unit))
-            )
+            toast(getString(ChatSessionRes.string.export_session_success))
         }.onFailure {
-            sendEvent(
-                ChatSessionEditorViewEvent.ExportSessionJsonValidateTaskState(ErrorOf(it.message ?: it.toString()))
-            )
+            toast(getString(
+                ChatSessionRes.string.failed_to_export_session,
+                it.message ?: it.toString()
+            ))
         }
 
     }
@@ -327,6 +319,7 @@ class ChatSessionEditorViewModel(
             sendEvent(
                 ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState(DataOf(Unit))
             )
+            toast(getString(ChatSessionRes.string.import_session_success))
             updateEntries(it.mapToChatSessionEntryList())
         }.onFailure {
             sendEvent(
