@@ -23,7 +23,9 @@ internal fun BackgroundParticleSelector(
     current: BackgroundParticle,
     select: (BackgroundParticle) -> Unit
 ) {
-    val options = listOf(BackgroundParticle.NONE, BackgroundParticle.SAKURA, BackgroundParticle.SNOWFLAKE)
+    val currentString = stringResource(getBackgroundParticleName(current))
+
+    val options = BackgroundParticle.entries.filterNot { it == BackgroundParticle.UNKNOWN }
     val optionStrings = options.associateWith {
         stringResource(getBackgroundParticleName(it))
     }
@@ -41,11 +43,10 @@ internal fun BackgroundParticleSelector(
     //    at <persona_im_maker:composeApp>.kotlin.wasm.internal.THROW_CCE_WITH_INFO (NATIVE_IMPLEMENTATIONS.kt:1:1)
     //    at <persona_im_maker:composeApp>.androidx.compose.foundation.text.input.<no name provided>.restore (NATIVE_IMPLEMENTATIONS.kt:1:1)
     //    at <persona_im_maker:composeApp>.androidx.compose.foundation.text.input.<no name provided>.restore (NATIVE_IMPLEMENTATIONS.kt:1:1)
-    val textFieldState = remember {
-        TextFieldState()
-    }
+    val textFieldState = TextFieldState(currentString)
 
     LaunchedEffect(current) {
+        println("LaunchedEffect current: $currentString")
         textFieldState.setTextAndPlaceCursorAtEnd(optionStrings[current]!!)
     }
 
