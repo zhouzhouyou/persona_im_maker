@@ -3,31 +3,15 @@ package com.yuri.persona_im_maker.chat.session.editor.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.yuri.im.schema.BackgroundParticle
 import com.yuri.im.ui.resource.icon.MyIconPack
 import com.yuri.im.ui.resource.icon.myiconpack.Check
-import com.yuri.persona_im_maker.chat.session.ChatSessionRes
 import com.yuri.persona_im_maker.chat.session.*
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -45,7 +29,21 @@ internal fun BackgroundParticleSelector(
     }
     var expanded by remember { mutableStateOf(false) }
 
-    val textFieldState = rememberTextFieldState("")
+    // fixme: rememberTextFieldState will cause following error:
+    // Uncaught ClassCastException: Cannot cast instance of <unknown> to kotlin.Int: incompatible types
+    //    at kotlin.createJsError (persona_im_maker-composeApp.uninstantiated.mjs:27:1)
+    //    at <persona_im_maker:composeApp>.kotlin.createJsError__externalAdapter (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.kotlin.Throwable.<init> (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.kotlin.Throwable.<init> (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.kotlin.Exception.<init> (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.kotlin.RuntimeException.<init> (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.kotlin.ClassCastException.<init> (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.kotlin.wasm.internal.THROW_CCE_WITH_INFO (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.androidx.compose.foundation.text.input.<no name provided>.restore (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    //    at <persona_im_maker:composeApp>.androidx.compose.foundation.text.input.<no name provided>.restore (NATIVE_IMPLEMENTATIONS.kt:1:1)
+    val textFieldState = remember {
+        TextFieldState()
+    }
 
     LaunchedEffect(current) {
         textFieldState.setTextAndPlaceCursorAtEnd(optionStrings[current]!!)
