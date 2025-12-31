@@ -17,7 +17,15 @@ enum class BuildInCustomMessageSender(val id: Int): ReceivedMessageSender {
     /**
      * Morogan. 摩尔加纳
      */
-    CUSTOM_SENDER_MOROGAN(2);
+    CUSTOM_SENDER_MOROGAN(2),
+
+    /**
+     * Morogan Human. 摩尔加纳人形态
+     */
+    CUSTOM_SENDER_MOROGAN_HUMAN(3),
+
+
+    ;
 
     override fun hashKey(): String = "buildInCustom $id"
 }
