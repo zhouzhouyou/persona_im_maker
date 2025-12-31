@@ -101,6 +101,7 @@ object ResourceUtil {
             BuildInCustomMessageSender.CUSTOM_SENDER_UNKNOWN -> StandardSenderAvatar.StandardAlibaba
             BuildInCustomMessageSender.CUSTOM_SENDER_SAE -> BuildInCustomSenderAvatar.CustomSaeNiijima
             BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN -> BuildInCustomSenderAvatar.CustomMorogan
+            BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN_HUMAN -> BuildInCustomSenderAvatar.CustomMoroganHuman
         }
     }
 
@@ -174,6 +175,7 @@ object ResourceUtil {
             StandardMessageSender.SENDER_RAFFLESHIA -> stringResource(UiResources.string.sender_raffleshia)
             BuildInCustomMessageSender.CUSTOM_SENDER_SAE -> stringResource(UiResources.string.sender_sae)
             BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN -> stringResource(UiResources.string.sender_morgana)
+            BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN_HUMAN -> stringResource(UiResources.string.sender_morgana)
             else -> "Unknown"
         }
     }

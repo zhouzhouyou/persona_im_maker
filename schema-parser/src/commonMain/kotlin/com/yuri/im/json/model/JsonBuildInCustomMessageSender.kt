@@ -30,13 +30,19 @@ internal enum class JsonBuildInCustomMessageSender(val value: Int, ) {
     /**
      * Morogan. 摩尔加纳
      */
-    CUSTOM_SENDER_MOROGAN(2);
+    CUSTOM_SENDER_MOROGAN(2),
+
+    /**
+     * Morogan Human. 摩尔加纳人形态
+     */
+    CUSTOM_SENDER_MOROGAN_HUMAN(3);
 
     fun toModel(): BuildInCustomMessageSender {
         return when (this) {
             CUSTOM_SENDER_UNKNOWN -> BuildInCustomMessageSender.CUSTOM_SENDER_UNKNOWN
             CUSTOM_SENDER_SAE -> BuildInCustomMessageSender.CUSTOM_SENDER_SAE
             CUSTOM_SENDER_MOROGAN -> BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN
+            CUSTOM_SENDER_MOROGAN_HUMAN -> BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN_HUMAN
         }
     }
 
@@ -52,6 +58,7 @@ internal fun BuildInCustomMessageSender.toDto(): JsonBuildInCustomMessageSender 
         BuildInCustomMessageSender.CUSTOM_SENDER_UNKNOWN -> JsonBuildInCustomMessageSender.CUSTOM_SENDER_UNKNOWN
         BuildInCustomMessageSender.CUSTOM_SENDER_SAE -> JsonBuildInCustomMessageSender.CUSTOM_SENDER_SAE
         BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN -> JsonBuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN
+        BuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN_HUMAN -> JsonBuildInCustomMessageSender.CUSTOM_SENDER_MOROGAN_HUMAN
     }
 }
 
