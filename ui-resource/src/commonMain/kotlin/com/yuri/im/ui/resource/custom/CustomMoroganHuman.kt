@@ -956,18 +956,131 @@ public val BuildInCustomSenderAvatar.CustomMoroganHuman: ImageVector
             }
             group(
                 clipPathData = PathData {
-                    moveToRelative(278.5f, 156.2f)
-                    curveToRelative(0f, 0f, -3.7f, 62.2f, 27.3f, 98.5f)
-                    curveToRelative(32.7f, 38.4f, 92.6f, 97.5f, 92.6f, 97.5f)
-                    lineToRelative(17f, -88.1f)
-                    lineToRelative(49f, 91.2f)
-                    lineToRelative(54.4f, -78.2f)
-                    lineToRelative(30.2f, 95.1f)
-                    curveToRelative(0f, 0f, 69.9f, -100.3f, 69.9f, -108.8f)
-                    curveToRelative(0f, -8.5f, -18.1f, -96.4f, -18.1f, -96.4f)
-                    curveToRelative(0f, 0f, -34.5f, 18.3f, -73.4f, 7.6f)
-                    curveToRelative(-41.1f, -11.3f, -83.1f, 25f, -114.3f, 12f)
-                    curveToRelative(-64.9f, -27.2f, -134.6f, -30.5f, -134.6f, -30.5f)
+                    moveToRelative(259f, 173.1f)
+                    lineToRelative(3.7f, 21.1f)
+                    lineToRelative(11.5f, 18.3f)
+                    curveToRelative(0f, 0f, -9.5f, -8.5f, -9.9f, -2.5f)
+                    curveToRelative(-0.7f, 9.3f, 18f, 19.9f, 18f, 19.9f)
+                    lineToRelative(-16.4f, -5f)
+                    curveToRelative(0f, 0f, -7.5f, 7.8f, -7.4f, 14.6f)
+                    curveToRelative(0.1f, 15.2f, 22.3f, 39.4f, 22.3f, 39.4f)
+                    curveToRelative(0f, 0f, 3.5f, -11.6f, 1.2f, -16.8f)
+                    curveToRelative(-3.7f, -8.4f, -7.1f, -21.4f, -7.1f, -21.4f)
+                    lineToRelative(18.3f, 23.6f)
+                    curveToRelative(0f, 0f, 10.5f, 14.2f, 18f, 11.5f)
+                    curveToRelative(1.4f, -0.5f, 3.1f, -2.5f, 3.1f, -2.5f)
+                    lineToRelative(2.8f, -0.3f)
+                    lineToRelative(-1.9f, -5.3f)
+                    lineToRelative(17.1f, 16.4f)
+                    lineToRelative(-15.5f, -22.6f)
+                    lineToRelative(2.5f, -0.3f)
+                    lineToRelative(-20.2f, -54.6f)
+                    curveToRelative(0f, 0f, -6.4f, -7.5f, -16.8f, -9.6f)
+                    curveToRelative(-10.9f, -2.2f, -23.3f, -23.9f, -23.3f, -23.9f)
+                    close()
+                    moveTo(0f, 0f)
+                    moveToRelative(318.9f, 134f)
+                    lineToRelative(-1.9f, 60.8f)
+                    lineToRelative(2.2f, 31.6f)
+                    lineToRelative(-8.4f, -12.7f)
+                    lineToRelative(7.4f, 21.4f)
+                    curveToRelative(0f, 0f, 9.1f, 9.3f, 14.6f, 12.4f)
+                    curveToRelative(5.5f, 3.1f, 18.3f, 6.2f, 18.3f, 6.2f)
+                    lineToRelative(-9.9f, -20.5f)
+                    lineToRelative(30.1f, 41f)
+                    lineToRelative(-7.4f, -17.1f)
+                    lineToRelative(25.4f, 27.9f)
+                    curveToRelative(0f, 0f, -36.5f, -48.3f, -47.6f, -72.3f)
+                    curveToRelative(-11.1f, -24f, -22.8f, -78.8f, -22.8f, -78.8f)
+                    close()
+                    moveTo(0f, 0f)
+                    moveToRelative(363.3f, 215f)
+                    curveToRelative(0f, 0f, 1.4f, 18f, 6.5f, 24.8f)
+                    curveToRelative(4.2f, 5.7f, 19.2f, 18.9f, 19.2f, 18.9f)
+                    lineToRelative(-6.2f, -16.1f)
+                    curveToRelative(0f, 0f, 10.3f, 10.1f, 19.9f, 14f)
+                    curveToRelative(13.7f, 5.5f, 48.1f, 10.2f, 48.1f, 10.2f)
+                    lineToRelative(-29.2f, -22f)
+                    lineToRelative(15.2f, -0.3f)
+                    lineToRelative(-16.8f, -33.8f)
+                    curveToRelative(0f, 0f, 13f, 17.1f, 21.6f, 24.4f)
+                    curveToRelative(8.5f, 7.3f, 29.6f, 19.4f, 29.6f, 19.4f)
+                    lineToRelative(11.8f, -6.5f)
+                    lineToRelative(-1.6f, -6.5f)
+                    lineToRelative(31.3f, 5.6f)
+                    curveToRelative(0f, 0f, -32.3f, -20.2f, -45.9f, -34.7f)
+                    curveToRelative(-15.4f, -16.5f, -39.1f, -58f, -39.1f, -58f)
+                    lineToRelative(2.8f, 16.4f)
+                    curveToRelative(0f, 0f, -1.9f, 4.1f, -5f, 7.8f)
+                    curveToRelative(-3.7f, 4.4f, -15.5f, 16.1f, -15.5f, 16.1f)
+                    lineToRelative(-3.1f, -4.3f)
+                    lineToRelative(-4.7f, 8.1f)
+                    lineToRelative(0.6f, 20.5f)
+                    curveToRelative(0f, 0f, -7.2f, -8.1f, -10.9f, -12.4f)
+                    curveToRelative(-3.6f, -4.2f, -7.6f, -9.3f, -10.2f, -14.3f)
+                    curveToRelative(-2.7f, -5.1f, -5.6f, -15.5f, -5.6f, -15.5f)
+                    lineToRelative(-4f, 13f)
+                    curveToRelative(0f, 0f, -2.8f, 9.3f, -3.1f, 14.9f)
+                    curveToRelative(-0.3f, 5.7f, 1.6f, 18.6f, 1.6f, 18.6f)
+                    close()
+                    moveTo(0f, 0f)
+                    moveToRelative(453.9f, 164.4f)
+                    curveToRelative(0f, 0f, 4.5f, 28.5f, 9.3f, 37.8f)
+                    curveToRelative(4.2f, 8.2f, 15.8f, 13f, 15.8f, 13f)
+                    lineToRelative(0.9f, -3.1f)
+                    lineToRelative(30.4f, 18f)
+                    curveToRelative(0f, 0f, -24.2f, -18.3f, -34.1f, -30.1f)
+                    curveTo(467.3f, 189.6f, 453.9f, 164.4f, 453.9f, 164.4f)
+                    close()
+                    moveTo(0f, 0f)
+                    moveToRelative(486.4f, 150.2f)
+                    curveToRelative(0f, 0f, 25.3f, 25.2f, 37.5f, 38.2f)
+                    curveToRelative(9.7f, 10.3f, 28.5f, 31.6f, 28.5f, 31.6f)
+                    lineToRelative(-1.2f, -6.8f)
+                    curveToRelative(0f, 0f, 16.6f, 4.2f, 22f, -0.9f)
+                    curveToRelative(3.4f, -3.3f, 0.9f, -13.3f, 0.9f, -13.3f)
+                    lineToRelative(11.5f, -5.6f)
+                    lineToRelative(5.6f, 14.3f)
+                    lineToRelative(-0.9f, -13.3f)
+                    curveToRelative(0f, 0f, -5.7f, -12.2f, -9.9f, -17.4f)
+                    curveToRelative(-4.8f, -5.8f, -10.4f, -11.4f, -17.1f, -14.9f)
+                    curveToRelative(-2.7f, -1.4f, -9f, -2.2f, -9f, -2.2f)
+                    lineToRelative(-14f, 0.6f)
+                    lineToRelative(9.3f, 9.6f)
+                    lineToRelative(-18.6f, -3.4f)
+                    lineToRelative(0.9f, 4.7f)
+                    curveToRelative(0f, 0f, -10.1f, -7.2f, -15.8f, -9.3f)
+                    curveToRelative(-4.2f, -1.5f, -9.1f, -0.6f, -13.3f, -2.2f)
+                    curveToRelative(-6f, -2.1f, -16.4f, -9.6f, -16.4f, -9.6f)
+                    close()
+                    moveTo(0f, 0f)
+                    moveToRelative(569f, 144.9f)
+                    curveToRelative(0f, 0f, 16.4f, 19f, 23.6f, 29.2f)
+                    curveToRelative(5.8f, 8.2f, 15.8f, 25.7f, 15.8f, 25.7f)
+                    curveToRelative(0f, 0f, 1.9f, -19.2f, -2.8f, -30.1f)
+                    curveToRelative(-2.8f, -6.6f, -15.8f, -22f, -15.8f, -22f)
+                    lineToRelative(-10.5f, 3.1f)
+                    close()
+                    moveTo(0f, 0f)
+                    moveToRelative(531.7f, 307.1f)
+                    lineToRelative(3.4f, 10.9f)
+                    lineToRelative(-0.9f, 3.4f)
+                    lineToRelative(7.8f, 14.9f)
+                    lineToRelative(-10.2f, -9.3f)
+                    lineToRelative(3.7f, 8.7f)
+                    lineToRelative(-3.1f, -0.3f)
+                    lineToRelative(11.2f, 15.8f)
+                    lineToRelative(0.3f, -6.5f)
+                    lineToRelative(4.7f, 2.8f)
+                    lineToRelative(2.8f, -1.6f)
+                    lineToRelative(3.4f, 5.9f)
+                    lineToRelative(3.1f, -3.1f)
+                    lineToRelative(0f, -5.9f)
+                    lineToRelative(2.2f, -4f)
+                    lineToRelative(0.3f, -3.7f)
+                    lineToRelative(-5.6f, -10.9f)
+                    lineToRelative(-4f, -2.8f)
+                    lineToRelative(-3.4f, 2.8f)
                     close()
                 }
             ) {
@@ -1173,6 +1286,69 @@ public val BuildInCustomSenderAvatar.CustomMoroganHuman: ImageVector
                     fill = SolidColor(Color.White),
                     strokeLineWidth = 6.2f,
                 ) {
+                    moveTo(359.9f, 311.4f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(423.3f, 312.2f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(325.8f, 296.6f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(296f, 281.6f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(298.4f, 321.5f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(331.3f, 335.4f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(260.7f, 194.1f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
                     moveTo(456.1f, 330.1f)
                     moveToRelative(-14.3f, 0f)
                     arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
@@ -1263,6 +1439,51 @@ public val BuildInCustomSenderAvatar.CustomMoroganHuman: ImageVector
                     fill = SolidColor(Color.White),
                     strokeLineWidth = 6.2f,
                 ) {
+                    moveTo(538.3f, 162.7f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(597.5f, 157.9f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(418.4f, 170.2f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(261.6f, 228.7f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
+                    moveTo(294.8f, 209.9f)
+                    moveToRelative(-14.3f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
+                    arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
+                }
+                path(
+                    fill = SolidColor(Color.White),
+                    strokeLineWidth = 6.2f,
+                ) {
                     moveTo(572.3f, 220.9f)
                     moveToRelative(-14.3f, 0f)
                     arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
@@ -1308,7 +1529,7 @@ public val BuildInCustomSenderAvatar.CustomMoroganHuman: ImageVector
                     fill = SolidColor(Color.White),
                     strokeLineWidth = 6.2f,
                 ) {
-                    moveTo(293.3f, 208.6f)
+                    moveTo(264.8f, 263.5f)
                     moveToRelative(-14.3f, 0f)
                     arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
                     arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
@@ -1367,6 +1588,46 @@ public val BuildInCustomSenderAvatar.CustomMoroganHuman: ImageVector
                     arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, 28.6f, 0f)
                     arcToRelative(14.6f, 14.3f, 90f, isMoreThanHalf = true, isPositiveArc = true, -28.6f, 0f)
                 }
+            }
+            path(
+                fill = SolidColor(Color.White),
+                strokeLineWidth = 5.51812f,
+            ) {
+                moveToRelative(139.5f, 221.6f)
+                lineToRelative(-28.5f, 96.5f)
+                lineToRelative(0.9f, 125.5f)
+                lineToRelative(5.3f, 34.2f)
+                lineToRelative(-1.8f, -57.5f)
+                lineToRelative(1.8f, -29.4f)
+                lineToRelative(-5.3f, -39.5f)
+                lineToRelative(16.2f, -75f)
+                lineToRelative(4.8f, 32.9f)
+                close()
+            }
+            path(
+                fill = SolidColor(Color.White),
+                strokeLineWidth = 5.51812f,
+            ) {
+                moveToRelative(146.5f, 240.9f)
+                curveToRelative(0f, 0f, -0.1f, -47.2f, 8.8f, -68.9f)
+                curveToRelative(7.4f, -18.2f, 20.6f, -32.9f, 34.2f, -47.4f)
+                curveToRelative(15.9f, -16.9f, 54.4f, -45.2f, 54.4f, -45.2f)
+                lineToRelative(27.6f, -15.4f)
+                lineToRelative(-29.8f, 25.9f)
+                curveToRelative(0f, 0f, -6.6f, 12.7f, -8.8f, 20.2f)
+                curveToRelative(-2.8f, 9.6f, -4.8f, 30.7f, -4.8f, 30.7f)
+                curveToRelative(0f, 0f, 11.1f, -37.3f, 21.9f, -53.1f)
+                curveToRelative(5.8f, -8.4f, 22.4f, -21.1f, 22.4f, -21.1f)
+                curveToRelative(0f, 0f, 9.5f, -0.9f, 14.5f, -3.1f)
+                curveToRelative(7.9f, -3.4f, 11.3f, -9.9f, 18.9f, -13.6f)
+                curveToRelative(10.9f, -5.3f, 36.9f, -11.8f, 36.9f, -11.8f)
+                lineToRelative(-39.5f, 7.9f)
+                lineToRelative(-62.3f, 32f)
+                curveToRelative(0f, 0f, -33.4f, 21f, -49.1f, 36f)
+                curveToRelative(-14.3f, 13.6f, -31.9f, 29.9f, -40.8f, 48.7f)
+                curveToRelative(-3.5f, 7.3f, -7f, 25.9f, -7f, 25.9f)
+                lineToRelative(0.4f, 17.5f)
+                close()
             }
         }.build()
 
