@@ -1,6 +1,7 @@
 package com.yuri.im
 
 import com.yuri.im.json.JsonSerialUtil
+import com.yuri.im.schema.BackgroundParticle
 import com.yuri.im.schema.BuildInCustomMessageSender
 import com.yuri.im.schema.ChatSession
 import com.yuri.im.schema.CustomMessageSender
@@ -20,6 +21,7 @@ class JsonTest {
         val chatSession = ChatSession(
             sessionID = "a",
             alias = "test",
+            backgroundParticle = BackgroundParticle.SAKURA,
             messages = listOf(
                 ReceiveMessage(
                     sender = StandardMessageSender.SENDER_ANN,

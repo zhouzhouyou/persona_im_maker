@@ -87,8 +87,9 @@ Validation on October 5, 2026 with Temurin JDK 21.0.12.1:
 
 - JVM, JS, and Wasm Kotlin compilation completed successfully.
 - `composeApp:jvmTest` passed.
-- Full `jvmTest` is blocked by the existing missing `backgroundParticle`
-  argument in `schema-parser`'s `JsonTest`.
+- Full `jvmTest` passed after updating `schema-parser`'s `JsonTest` fixture with
+  the required `backgroundParticle` argument; the serialization round-trip also
+  verifies that the selected particle is preserved.
 - `androidApp:assembleDebug` passed and generated
   `androidApp/build/outputs/apk/debug/androidApp-debug.apk`; its APK signature was
   verified using Build Tools' `apksigner`.
