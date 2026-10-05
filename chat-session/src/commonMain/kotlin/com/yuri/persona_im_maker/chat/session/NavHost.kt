@@ -49,8 +49,12 @@ data class ChatSessionEdit(
 
 
 @Serializable
+enum class PlaybackLayout { AUTO, FULL_SCREEN }
+
+@Serializable
 data class ChatSessionDisplay(
-    val sessionID: String
+    val sessionID: String,
+    val layout: PlaybackLayout = PlaybackLayout.AUTO,
 ) : ChatSessionNavRoute
 
 private val config = SavedStateConfiguration {
@@ -70,7 +74,9 @@ fun ChatSessionNavHost(settings: Settings, startDestination: ChatSessionNavRoute
     val chatSessionRepo = TemporaryMemoryCache
 
     val backStack = rememberNavBackStack(config, startDestination)
-    val twoPaneStrategy = rememberTwoPaneSceneStrategy<NavKey>()
+    val twoPaneStrategy = rememberTwoPaneSceneStrategy<NavKey>(
+        allowTwoPane = (backStack.lastOrNull() as? ChatSessionDisplay)?.layout != PlaybackLayout.FULL_SCREEN
+    )
 
     NavDisplay(
         backStack = backStack,
@@ -86,7 +92,7 @@ fun ChatSessionNavHost(settings: Settings, startDestination: ChatSessionNavRoute
             ) {
                 ChatSessionEditorView(
                     viewModel { ChatSessionEditorViewModel(settings, chatSessionRepo) },
-                    navToPlay = { backStack.addSessionDisplayRoute(it) },
+                    navToPlay = { id, layout -> backStack.addSessionDisplayRoute(id, layout) },
                     back = { backStack.removeLastOrNull() }
                 )
             }
@@ -109,16 +115,21 @@ fun ChatSessionNavHost(settings: Settings, startDestination: ChatSessionNavRoute
                 val chatSessionEdit: ChatSessionEdit = it
                 ChatSessionEditorView(
                     viewModel { ChatSessionEditorViewModel(settings, chatSessionRepo, chatSessionEdit.sessionID) },
-                    navToPlay = { backStack.addSessionDisplayRoute(it) },
+                    navToPlay = { id, layout -> backStack.addSessionDisplayRoute(id, layout) },
                     back = { backStack.removeLastOrNull() }
                 )
             }
         }
     )
 }
-private fun NavBackStack<NavKey>.addSessionDisplayRoute(sessionID: String) {
-    val chatSessionDisplayRoute = ChatSessionDisplay(sessionID)
-    // Avoid adding the same product route to the back stack twice.
+internal fun NavBackStack<NavKey>.addSessionDisplayRoute(sessionID: String, layout: PlaybackLayout) {
+    val chatSessionDisplayRoute = ChatSessionDisplay(sessionID, layout)
+    // Switching modes from the visible editor replaces playback so Back returns to editing.
+    val currentPlayback = lastOrNull() as? ChatSessionDisplay
+    if (currentPlayback?.sessionID == sessionID) {
+        if (currentPlayback == chatSessionDisplayRoute) return
+        removeLastOrNull()
+    }
     if (!contains(chatSessionDisplayRoute)) {
         add(chatSessionDisplayRoute)
     }
@@ -188,11 +199,11 @@ class TwoPaneScene<T : Any>(
 
 
 @Composable
-fun <T: Any> rememberTwoPaneSceneStrategy() : TwoPaneSceneStrategy<T> {
+fun <T: Any> rememberTwoPaneSceneStrategy(allowTwoPane: Boolean = true) : TwoPaneSceneStrategy<T> {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
-    return remember(windowSizeClass){
-        TwoPaneSceneStrategy(windowSizeClass)
+    return remember(windowSizeClass, allowTwoPane){
+        TwoPaneSceneStrategy(windowSizeClass, allowTwoPane)
     }
 }
 
@@ -202,9 +213,16 @@ fun <T: Any> rememberTwoPaneSceneStrategy() : TwoPaneSceneStrategy<T> {
  * A [SceneStrategy] that activates a [TwoPaneScene] if the window is wide enough
  * and the top two back stack entries declare support for two-pane display.
  */
-class TwoPaneSceneStrategy<T : Any>(val windowSizeClass: WindowSizeClass) : SceneStrategy<T> {
+class TwoPaneSceneStrategy<T : Any>(
+    val windowSizeClass: WindowSizeClass,
+    val allowTwoPane: Boolean = true,
+) : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
+
+        if (!allowTwoPane) {
+            return null
+        }
 
         // Condition 1: Only return a Scene if the window is sufficiently wide to render two panes.
         // We use isWidthAtLeastBreakpoint with WIDTH_DP_MEDIUM_LOWER_BOUND (600dp).

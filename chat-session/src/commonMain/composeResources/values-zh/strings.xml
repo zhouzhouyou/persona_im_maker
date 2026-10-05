@@ -4,6 +4,9 @@
     <string name="chat_session_editor">对话编辑器</string>
     <string name="chat_session_name">会话名称</string>
     <string name="btn_new">新建</string>
+    <string name="playback_options">播放方式</string>
+    <string name="playback_auto">自动布局播放</string>
+    <string name="playback_full_screen">全屏播放</string>
     <string name="btn_management_mode">管理模式</string>
     <string name="btn_exit_management_mode">退出管理模式</string>
     <string name="btn_save">保存</string>
