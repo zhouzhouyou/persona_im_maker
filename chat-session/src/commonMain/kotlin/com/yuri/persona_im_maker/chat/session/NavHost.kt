@@ -75,7 +75,7 @@ fun ChatSessionNavHost(settings: Settings, startDestination: ChatSessionNavRoute
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
-        sceneStrategy = twoPaneStrategy,
+        sceneStrategies = listOf(twoPaneStrategy),
         entryProvider = entryProvider {
             entry<ChatSessionManage> {
                 TODO()
