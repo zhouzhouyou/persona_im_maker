@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary)
 }
 
 kotlin {
@@ -20,10 +20,14 @@ kotlin {
         binaries.executable()
     }
 
-    androidTarget {
+    android {
+        namespace = "com.yuri.persona_im_maker.schema"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        withHostTest {}
     }
     // Add other targets as needed, e.g., js(), iosX64(), etc.
 
@@ -36,26 +40,10 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.yuri.persona_im_maker.schema"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+kotlin {
+    sourceSets {
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
     }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
-dependencies {
-    commonTestImplementation(libs.kotlin.test)
 }

@@ -89,7 +89,7 @@ internal fun BackgroundParticleSelector(
                     onClick = {
                         select(option)
                     },
-                    checkedLeadingIcon = { Icon(MyIconPack.Check, contentDescription = null) },
+                    selectedLeadingIcon = { Icon(MyIconPack.Check, contentDescription = null) },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }

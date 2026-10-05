@@ -34,6 +34,7 @@ plugins {
 }
 
 include(":composeApp")
+include(":androidApp")
 include(":schema")
 include(":schema-parser")
 include(":ui-resource")
