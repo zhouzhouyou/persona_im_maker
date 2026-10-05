@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuri.im.schema.BackgroundParticle
@@ -23,9 +22,18 @@ import com.yuri.im.ui.resource.icon.myiconpack.*
 import com.yuri.persona.im.task.state.*
 import com.yuri.persona_im_maker.chat.session.*
 import com.yuri.persona_im_maker.chat.session.editor.ui.*
-import com.yuri.persona_im_maker.utils.createClipEntryWithPlainText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CancellationException
+import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.readBytes
+import io.github.vinceglb.filekit.size
+import com.yuri.im.json.PimSessionFile
+import com.yuri.im.schema.ImageAsset
+import com.yuri.im.ui.resource.utils.prepareImage
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -37,7 +45,6 @@ fun ChatSessionEditorView(
     back: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val clipboard = LocalClipboard.current
     val state by model.state.collectAsStateWithLifecycle()
     var isManagementMode by remember {
         mutableStateOf(false)
@@ -51,8 +58,36 @@ fun ChatSessionEditorView(
         mutableStateOf(FavoriteSenderEditDialogState.None)
     }
 
-    var importSessionDialogState: ImportSessionDialogState by remember {
-        mutableStateOf(ImportSessionDialogState.None)
+    var fileBusy by remember { mutableStateOf(false) }
+    val filePicker = rememberFilePickerLauncher(type = FileKitType.File(listOf("pim"))) { file ->
+        if (file != null && !fileBusy) coroutineScope.launch {
+            fileBusy = true
+            try {
+                val session = withContext(Dispatchers.Default) {
+                    require(file.size() <= PimSessionFile.MAX_BYTES) { "Session exceeds 100 MB" }
+                    val parsed = PimSessionFile.decode(file.readBytes())
+                    val images = parsed.images.mapValues { (id, asset) -> prepareImage(id, asset.bytes) }
+                    parsed.copy(images = images)
+                }
+                model.replaceSession(session)
+                model.showFileResult(getString(ChatSessionRes.string.import_session_success))
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { model.showFileResult(getString(ChatSessionRes.string.file_import_failed, e.message ?: "")) }
+            finally { fileBusy = false }
+        }
+    }
+    val exportSession: () -> Unit = {
+        if (!fileBusy) coroutineScope.launch {
+            fileBusy = true
+            try {
+                val session = model.buildChatSession()
+                val bytes = withContext(Dispatchers.Default) { PimSessionFile.encode(session) }
+                val filename = session.alias.map { if (it < ' ' || it in "\\/:*?\"<>|") '_' else it }.joinToString("").trim().take(80).ifBlank { "persona-chat" }
+                if (saveSessionFile(bytes, filename)) model.showFileResult(getString(ChatSessionRes.string.export_session_success))
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { model.showFileResult(getString(ChatSessionRes.string.failed_to_export_session, e.message ?: "")) }
+            finally { fileBusy = false }
+        }
     }
 
     val entriesLazyListState = rememberLazyListState()
@@ -73,31 +108,6 @@ fun ChatSessionEditorView(
         }
     }
 
-    LaunchedEffect(state.setToClipboardContent) {
-        state.setToClipboardContent?.let {
-            coroutineScope.launch(Dispatchers.Main) {
-                clipboard.setClipEntry(createClipEntryWithPlainText(it))
-                model.sendUIEvent(ChatSessionEditorUIEvent.ClearSetToClipboardContent)
-            }
-        }
-    }
-
-    LaunchedEffect(state.importSessionJsonValidateTaskState) {
-        when (val taskState = state.importSessionJsonValidateTaskState) {
-            Cancelled -> {
-                importSessionDialogState = ImportSessionDialogState.None
-            }
-
-            Idle -> {}
-            is ProgressOf<*> -> {}
-            is DataOf<*> -> {
-                importSessionDialogState = ImportSessionDialogState.None
-            }
-
-            is ErrorOf<*> -> {}
-        }
-    }
-
     if (state.initializing) {
         ContainedLoadingIndicator(modifier = Modifier.fillMaxSize(0.8f))
     } else {
@@ -115,7 +125,8 @@ fun ChatSessionEditorView(
                             updateManagementMode = { isManagementMode = it },
                             sendUIEvent = model::sendUIEvent,
                             updateChatMessageEditScreenState = { dialogState = it },
-                            updateImportSessionDialogState = { importSessionDialogState = it },
+                            importSessionFile = { if (!fileBusy) filePicker.launch() },
+                            exportSessionFile = exportSession,
                             navToPlay = navToPlay,
                             saveEnabled = state.entries.isNotEmpty(),
                         )
@@ -146,6 +157,7 @@ fun ChatSessionEditorView(
                 sendUIEvent = model::sendUIEvent,
                 getEntriesLazyListState = { entriesLazyListState },
                 entries = state.entries,
+                images = state.images,
                 isManagementMode = isManagementMode,
                 updateChatMessageEditDialogState = { dialogState = it },
             )
@@ -155,6 +167,7 @@ fun ChatSessionEditorView(
     ChatMessageEditScreenWrapper(
         dialogState = dialogState,
         allSenders = allSenders,
+        images = state.images,
         closeEntryDialog = { dialogState = ChatMessageEditScreenState.None },
         sendUIEvent = model::sendUIEvent
     )
@@ -168,17 +181,13 @@ fun ChatSessionEditorView(
         }
     )
 
-    ImportSessionDialog(
-        dialogState = importSessionDialogState,
-        validState = state.importSessionJsonValidateTaskState,
-        importSessionFromJson = {
-            model.sendUIEvent(ChatSessionEditorUIEvent.ImportSession(it))
-        },
-        onDismiss = {
-            importSessionDialogState = ImportSessionDialogState.None
-            model.sendUIEvent(ChatSessionEditorUIEvent.IdleImportSessionValidate)
-        }
+    if (fileBusy) AlertDialog(
+        onDismissRequest = {},
+        confirmButton = {},
+        title = { Text(stringResource(ChatSessionRes.string.session_file_processing)) },
+        text = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
     )
+
 }
 
 @Composable
@@ -189,7 +198,8 @@ private fun ChatSessionEditorMenuActions(
     updateManagementMode: (Boolean) -> Unit,
     sendUIEvent: (ChatSessionEditorUIEvent) -> Unit,
     updateChatMessageEditScreenState: (ChatMessageEditScreenState) -> Unit,
-    updateImportSessionDialogState: (ImportSessionDialogState) -> Unit,
+    importSessionFile: () -> Unit,
+    exportSessionFile: () -> Unit,
     saveEnabled: Boolean,
     navToPlay: (String, PlaybackLayout) -> Unit,
 ) {
@@ -221,14 +231,14 @@ private fun ChatSessionEditorMenuActions(
                     text = ChatSessionRes.string.btn_export,
                     leadingIcon = MyIconPack.Export,
                     onClick = {
-                        sendUIEvent(ChatSessionEditorUIEvent.ExportSession)
+                        exportSessionFile()
                     }
                 ),
                 MoreMenuAction.Action(
                     text = ChatSessionRes.string.btn_import,
                     leadingIcon = MyIconPack.Import,
                     onClick = {
-                        updateImportSessionDialogState(ImportSessionDialogState.Show)
+                        importSessionFile()
                     }
                 ),
                 MoreMenuAction.HorizontalDivider,
@@ -252,6 +262,7 @@ private fun ChatSessionEditorContent(
     sendUIEvent: (ChatSessionEditorUIEvent) -> Unit,
     getEntriesLazyListState: () -> LazyListState,
     entries: List<ChatSessionEntry>,
+    images: Map<String, ImageAsset>,
     isManagementMode: Boolean,
     updateChatMessageEditDialogState: (ChatMessageEditScreenState) -> Unit,
 ) {
@@ -293,6 +304,7 @@ private fun ChatSessionEditorContent(
         ChatMessageList(
             listState = getEntriesLazyListState,
             entries = entries,
+            images = images,
             isManagementMode = isManagementMode,
             onDelete = { sendUIEvent(ChatSessionEditorUIEvent.DeleteEntry(it.id)) },
             onEdit = {
@@ -335,7 +347,7 @@ private fun MoreMenuActions(menuActionList: List<MoreMenuAction>) {
                     is MoreMenuAction.Action -> {
                         DropdownMenuItem(
                             text = { Text(stringResource(it.text)) },
-                            onClick = it.onClick,
+                            onClick = { expanded = false; it.onClick() },
                             leadingIcon = it.leadingIcon?.run {
                                 {
                                     Icon(this, contentDescription = null)

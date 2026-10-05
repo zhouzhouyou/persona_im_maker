@@ -9,7 +9,7 @@ I don't have other devices, so I only test the project on my Windows.
 
 ## Project structure
 
-The app edits and plays Persona-style chat sessions, with JSON import/export,
+The app edits and plays Persona-style chat sessions, with `.pim` file import/export,
 custom senders, favorite senders, and animated backgrounds. Shared Kotlin and
 Compose code targets Android, desktop JVM, JavaScript, and Wasm; no iOS target
 is currently configured.
@@ -32,23 +32,50 @@ Multiplatform Settings. The session management navigation entry is unfinished
 (`TODO()`), and existing meaningful tests focus on JSON round trips.
 Custom avatar lookup still contains a `TODO()` branch; custom sender JSON conversion is supported.
 
-## Image messages
+## Image messages and session files
 
 Choose **图片 / Image** when editing a message, then select a PNG or JPEG. The
-editor previews the image and lets you replace it or switch back to text. Images
-can be sent by any existing sender, including the player. Each file is limited
-to 2 MB, 16 million pixels, and 8192 pixels per side.
+editor previews the image and lets you replace it or switch back to text. Any
+existing sender, including the player, can send images. Re-selecting identical
+image bytes reuses an existing resource ID. Messages reference a session resource
+table; image bytes are independent of the message objects.
 
-Playback first shows the sender with a camera icon for 500 ms. The photo then
-rotates and unfolds through a polygon mask over 420 ms, leaving a black frame,
-a lower-right sender portrait, and a white underline. The transcript grows and
-scrolls as the photo opens; advancing is blocked until the reveal completes.
-Photos remain in the transcript. There is no large-image viewer in this version.
+Inputs are limited to 25 MiB and 32 million pixels before decoding. Oversized
+images are scaled proportionally to a maximum edge of 2048 pixels. JPEG output
+uses quality 85; PNG output preserves transparency. EXIF orientations, including
+mirroring, are normalized. Small, correctly oriented files retain their original
+bytes. Original full-size files are not retained separately. The shared image
+cache uses 256-pixel editor thumbnails and bounded playback bitmaps. Session
+resources are limited to 256 images and 100 MiB.
 
-JSON format version 2 embeds image bytes as Base64 in an `images` resource table;
-messages reference their image by ID. Repeated references export only one copy.
-Version 1 text sessions remain readable. Older app versions cannot read exports containing image messages. Sessions still use the existing in-memory repository, so export a
-session to keep it across restarts.
+Playback shows the sender with a camera icon for 500 ms, then rotates and unfolds
+the photo through a polygon mask over 420 ms. A black frame, lower-right sender
+portrait and white underline remain. Layout and scrolling follow the expansion;
+advancing is blocked until it completes. Photos remain in the transcript. There
+is no large-image viewer.
+
+Export opens a native save dialog on Android/JVM and initiates a browser download
+on JS/Wasm. Android uses SAF `ACTION_CREATE_DOCUMENT` for saving and
+`ACTION_OPEN_DOCUMENT` for importing through FileKit 0.12.0. Returned content
+URIs are read/written with `ContentResolver` streams, not filesystem paths;
+no broad storage permission is required. The Compose picker initializes its
+ActivityResultRegistry from the hosting ComponentActivity. Import opens a file
+picker. Both use `.pim` files rather than the
+clipboard. After all resources have been validated and processed, import replaces
+the name, background, messages and image resources together. Cancellation or a
+failed import preserves the current session. Processing blocks duplicate actions.
+Sessions still use the existing in-memory repository; export to retain a session
+across restarts. Favorite senders keep their existing settings serialization.
+
+A `.pim` file is a ZIP container with `session.json` (`formatVersion: 1`) and
+binary `images/<resourceId>.jpg` or `.png` entries. Shared resources are written
+once. The implementation is common Kotlin across Android/JVM/JS/Wasm. Version 1
+uses only unencrypted **STORE** entries, including the manifest; ZIP64,
+DEFLATE, streamed entries and multipart archives are rejected. No legacy JSON or
+Base64 session compatibility is maintained. CRC checks, bounded entry counts,
+1 MiB manifest/100 MiB package limits, safe paths, duplicate IDs/paths and exact
+resource references are checked before applying imported data. ZIP paths are
+never extracted onto the filesystem.
 
 ## Build and Compose versions
 
@@ -116,16 +143,31 @@ Validation on October 5, 2026 with Temurin JDK 21.0.12.1:
   were captured during these checks. Import/export, persistence across restarts,
   and Android device UI were not covered by this browser check.
 
-Image-message validation on October 5, 2026:
+Image-message and session-package validation on October 6, 2026:
 
-- Full JVM tests, Android debug assembly, and JVM/JS/Wasm compilation passed.
-- JSON tests cover shared-image round trips, version 1 compatibility, missing
-  references, invalid metadata/format/size, and conflicting resource IDs.
-- Wasm UI checks at 1280×720 and 390×844 covered selecting/saving/replacing an
-  image, mixed text/image JSON import, received and self image playback,
-  camera/reveal transitions, connecting lines, and scrolling to subsequent text.
-  A corrupt JPEG showed an error and preserved the previously selected image.
-- Android file selection and animation have been compiled but not checked on a device.
+- JVM tests, Android debug assembly, and JVM/JS/Wasm compilation passed.
+- Package tests cover mixed messages, one binary copy per resource, name/background
+  round trips, missing references, invalid metadata, duplicate IDs, unsupported
+  versions, CRC failures, truncated packages, unexpected entries and invalid paths.
+- JVM image tests cover all eight EXIF orientations (pixel and dimension checks),
+  transparent PNG resizing, unchanged small images and corrupt input rejection.
+- Wasm UI checks covered image selection, editing, saving, replacement failures,
+  camera/reveal animation, received/self images, connecting lines, scroll updates,
+  and file import restoring the name/background/messages/resources. A 3100×1700
+  EXIF-rotated JPEG was normalized on import and previewed with the correct aspect.
+- The browser-exported `.pim` was found in Downloads, checked with Python ZIP
+  CRC validation, and successfully reimported in Wasm: name, background and both
+  image messages were restored from one normalized binary resource.
+- JVM native file write/read tests passed using FileKit, including a complete
+  session round trip and reading the output with Java's standard ZipFile.
+  A desktop application distribution was built and launched; native open/save
+  dialogs were observed. Full desktop dialog round-trip UI validation remains
+  incomplete because native automation timed out after closing the open dialog
+  and coordinate actions reported no available window.
+- Android SAF CreateDocument/OpenDocument contracts, URI stream reads/writes
+  and ActivityResultRegistry initialization were verified against the installed
+  FileKit version's source. Android dialogs and animations have not been checked
+  on a device.
 
 ### Copyright
 

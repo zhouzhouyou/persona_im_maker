@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.yuri.im.schema.ChatMessage
+import com.yuri.im.schema.ImageAsset
 import com.yuri.im.schema.ImageMessage
 import com.yuri.im.schema.EmotionMarker
 import com.yuri.im.schema.MessageSender
@@ -72,6 +73,7 @@ internal sealed interface ChatMessageEditScreenState {
 internal fun ChatMessageEditScreenWrapper(
     dialogState: ChatMessageEditScreenState,
     allSenders: List<MessageSender>,
+    images: Map<String, ImageAsset>,
     closeEntryDialog: () -> Unit,
     sendUIEvent: (ChatSessionEditorUIEvent) -> Unit
 ) {
@@ -108,9 +110,10 @@ internal fun ChatMessageEditScreenWrapper(
 
                     },
                     allSenders = allSenders,
+                    image = null,
                     onDismiss = closeEntryDialog,
-                    onSave = { chatMessage ->
-                        sendUIEvent(ChatSessionEditorUIEvent.AddEntry(chatMessage))
+                    onSave = { chatMessage, asset ->
+                        sendUIEvent(ChatSessionEditorUIEvent.AddEntry(chatMessage, asset))
                         closeEntryDialog()
                     }
                 )
@@ -123,12 +126,14 @@ internal fun ChatMessageEditScreenWrapper(
                     dialogProperties = dialogProperties,
                     chatMessage = dialogState.entry.chatMessage,
                     allSenders = allSenders,
+                    image = (dialogState.entry.chatMessage as? ImageMessage)?.imageId?.let(images::get),
                     onDismiss = closeEntryDialog,
-                    onSave = { chatMessage ->
+                    onSave = { chatMessage, asset ->
                         sendUIEvent(
                             ChatSessionEditorUIEvent.ModifyEntry(
                                 dialogState.entry.id,
-                                chatMessage
+                                chatMessage,
+                                asset
                             )
                         )
                         closeEntryDialog()
@@ -149,7 +154,8 @@ private fun ChatMessageEditView(
     chatMessage: ChatMessage,
     allSenders: List<MessageSender>,
     onDismiss: () -> Unit,
-    onSave: (ChatMessage) -> Unit,
+    image: ImageAsset?,
+    onSave: (ChatMessage, ImageAsset?) -> Unit,
 ) {
     var localText by remember {
         when (chatMessage) {
@@ -179,7 +185,7 @@ private fun ChatMessageEditView(
 
     var emotionMarker by remember { mutableStateOf(chatMessage.emotionMarker) }
     var imageMode by remember { mutableStateOf(chatMessage is ImageMessage) }
-    var selectedImage by remember { mutableStateOf((chatMessage as? ImageMessage)?.image) }
+    var selectedImage by remember { mutableStateOf(image) }
     var imageLoading by remember { mutableStateOf(false) }
 
     AlertDialog(
@@ -289,7 +295,7 @@ private fun ChatMessageEditView(
         confirmButton = {
             Button(enabled = !imageMode || (selectedImage != null && !imageLoading), onClick = {
                 onSave(
-                    if (imageMode) ImageMessage(sender, requireNotNull(selectedImage)) else when (sender) {
+                    if (imageMode) ImageMessage(sender, requireNotNull(selectedImage).id) else when (sender) {
                         MessageSenderSelf -> {
                             if (currentMessageTypeIsOptions) {
                                 ReplyOptions(options = localOptions)
@@ -303,7 +309,8 @@ private fun ChatMessageEditView(
                             content = localText,
                             emotionMarker = emotionMarker,
                         )
-                    }
+                    },
+                    selectedImage.takeIf { imageMode },
                 )
                 localText = ""
                 emotionMarker = EmotionMarker.EMOTION_MARKER_UNKNOWN

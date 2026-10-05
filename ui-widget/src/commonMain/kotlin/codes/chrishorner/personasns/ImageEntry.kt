@@ -19,11 +19,11 @@ import com.yuri.im.ui.resource.utils.EmbeddedImage
 /** Camera-tagged sender card unfolds into a photo, with its sender anchored at the lower right. */
 @Composable
 fun ImageEntry(entry: Entry, modifier: Modifier = Modifier) {
-    val message = entry.message as ImageMessage
+    val image = requireNotNull(entry.image)
     val progress = entry.imageProgress.value
     BoxWithConstraints(modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
-        val photoWidth = (maxWidth - 16.dp).coerceAtMost(520.dp)
-        val photoHeight = (photoWidth * message.image.height.toFloat() / message.image.width).coerceIn(90.dp, 360.dp)
+        val photoWidth = TranscriptSizes.imagePhotoWidth(maxWidth + 16.dp, image)
+        val photoHeight = (photoWidth * image.height.toFloat() / image.width).coerceIn(90.dp, 360.dp)
         val height = 90.dp + (photoHeight + 24.dp - 90.dp) * progress
         val rotation = when {
             progress < 0.3f -> -38f * progress / 0.3f
@@ -52,7 +52,7 @@ fun ImageEntry(entry: Entry, modifier: Modifier = Modifier) {
                         lineTo(inset, size.height)
                         close()
                     }
-                    EmbeddedImage(message.image, null, Modifier.fillMaxSize().clip(revealShape))
+                    EmbeddedImage(image, null, Modifier.fillMaxSize().clip(revealShape))
                 }
             }
             Box(Modifier.offset(

@@ -1,32 +1,36 @@
 package com.yuri.im.schema
 
-import kotlin.io.encoding.Base64
-
-data class ImageMessage(override val sender: MessageSender, val image: ImageAsset) : ChatMessage {
+/** Messages reference session resources rather than carrying their own image data. */
+data class ImageMessage(override val sender: MessageSender, val imageId: String) : ChatMessage {
     override val fromSelf: Boolean get() = sender == MessageSenderSelf
 }
 
-/** Embedded image data; exported once per ID in the session's resource table. */
-data class ImageAsset(val id: String, val mimeType: String, val width: Int, val height: Int, val base64: String) {
-    fun bytes(): ByteArray = Base64.decode(base64)
+data class ImageInfo(val mimeType: String, val width: Int, val height: Int, val orientation: Int = 1)
 
+/** Binary resource. Equality compares content, including image bytes. */
+class ImageAsset(val id: String, val mimeType: String, val width: Int, val height: Int, val bytes: ByteArray) {
     fun validate(): ImageAsset {
-        require(id.isNotBlank()) { "Image ID is missing" }
-        require(base64.length <= ((MAX_BYTES + 2) / 3) * 4) { "Image exceeds 2 MB" }
-        val info = inspect(bytes())
-        require(info == Triple(mimeType, width, height)) { "Image metadata does not match its contents" }
+        require(id.matches(Regex("[A-Za-z0-9_-]{1,80}"))) { "Invalid image ID" }
+        val info = inspect(bytes)
+        require(info.mimeType == mimeType && info.width == width && info.height == height) { "Image metadata does not match its contents" }
         return this
     }
+    override fun equals(other: Any?): Boolean = this === other || other is ImageAsset &&
+        id == other.id && mimeType == other.mimeType && width == other.width && height == other.height && bytes.contentEquals(other.bytes)
+    override fun hashCode(): Int = 31 * (31 * (31 * id.hashCode() + mimeType.hashCode()) + width) + height + bytes.contentHashCode()
 
     companion object {
-        const val MAX_BYTES = 2 * 1024 * 1024
+        const val MAX_BYTES = 25 * 1024 * 1024
+        const val MAX_SESSION_BYTES = 100 * 1024 * 1024
+        const val MAX_RESOURCES = 256
+        const val MAX_PIXELS = 32_000_000L
+        const val DISPLAY_EDGE = 2048
         fun fromBytes(id: String, bytes: ByteArray): ImageAsset {
-            val (mime, width, height) = inspect(bytes)
-            return ImageAsset(id, mime, width, height, Base64.encode(bytes))
+            val info = inspect(bytes)
+            return ImageAsset(id, info.mimeType, info.width, info.height, bytes).validate()
         }
-
-        private fun inspect(bytes: ByteArray): Triple<String, Int, Int> {
-            require(bytes.size in 1..MAX_BYTES) { "Image exceeds 2 MB or is empty" }
+        fun inspect(bytes: ByteArray): ImageInfo {
+            require(bytes.size in 1..MAX_BYTES) { "Image exceeds 25 MB or is empty" }
             fun u(i: Int) = bytes[i].toInt() and 255
             fun word(i: Int) = (u(i) shl 8) or u(i + 1)
             fun int(i: Int) = (u(i) shl 24) or (u(i + 1) shl 16) or (u(i + 2) shl 8) or u(i + 3)
@@ -61,10 +65,10 @@ data class ImageAsset(val id: String, val mimeType: String, val width: Int, val 
                 }
                 else -> throw IllegalArgumentException("Only PNG and JPEG images are supported")
             }
-            require(width in 1..8192 && height in 1..8192 && width.toLong() * height <= 16_000_000) {
-                "Image dimensions exceed 8192 pixels or 16 megapixels"
+            require(width in 1..32768 && height in 1..32768 && width.toLong() * height <= MAX_PIXELS) {
+                "Image dimensions exceed 32768 pixels per side or 32 megapixels"
             }
-            return Triple(mime, width, height)
+            return ImageInfo(mime, width, height, if (mime == "image/jpeg") exifOrientation(bytes) else 1)
         }
     }
 }

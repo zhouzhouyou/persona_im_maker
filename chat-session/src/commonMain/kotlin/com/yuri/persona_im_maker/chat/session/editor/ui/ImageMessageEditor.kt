@@ -16,7 +16,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.decodeToImageBitmap
+import com.yuri.im.ui.resource.utils.prepareImage
 import org.jetbrains.compose.resources.stringResource
 import kotlin.uuid.Uuid
 
@@ -32,9 +32,7 @@ internal fun ImageMessageEditor(image: ImageAsset?, onImage: (ImageAsset) -> Uni
                 val asset = withContext(Dispatchers.Default) {
                     require(file.size() <= ImageAsset.MAX_BYTES)
                     val bytes = file.readBytes()
-                    val value = ImageAsset.fromBytes(Uuid.random().toString(), bytes)
-                    bytes.decodeToImageBitmap() // Validate before accepting a corrupt image.
-                    value
+                    prepareImage(Uuid.random().toString(), bytes)
                 }
                 onImage(asset)
             } catch (e: CancellationException) {
@@ -48,7 +46,7 @@ internal fun ImageMessageEditor(image: ImageAsset?, onImage: (ImageAsset) -> Uni
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         image?.let {
-            EmbeddedImage(it, stringResource(ChatSessionRes.string.image_message), Modifier.fillMaxWidth().height(160.dp))
+            EmbeddedImage(it, stringResource(ChatSessionRes.string.image_message), Modifier.fillMaxWidth().height(160.dp), thumbnail = true)
         }
         Button(enabled = !busy, onClick = { picker.launch() }) {
             Text(stringResource(if (image == null) ChatSessionRes.string.choose_image else ChatSessionRes.string.replace_image))

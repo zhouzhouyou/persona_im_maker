@@ -30,6 +30,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yuri.im.schema.MessageSenderSelf
+import com.yuri.im.schema.ImageAsset
 import com.yuri.im.schema.ImageMessage
 import com.yuri.im.ui.resource.utils.EmbeddedImage
 import com.yuri.im.schema.PlainText
@@ -53,6 +54,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun ChatMessageList(
     listState: () -> LazyListState,
     entries: List<ChatSessionEntry>,
+    images: Map<String, ImageAsset>,
     isManagementMode: Boolean,
     onDelete: (ChatSessionEntry) -> Unit,
     onEdit: (ChatSessionEntry) -> Unit,
@@ -72,6 +74,7 @@ fun ChatMessageList(
             ReorderableItem(reorderableLazyListState, key = it.id) { isDragging ->
                 ChatMessageCard(
                     entry = it,
+                    image = (it.chatMessage as? ImageMessage)?.imageId?.let(images::get),
                     isManagementMode = isManagementMode,
                     scope = this,
                     onDelete = { onDelete(it) },
@@ -85,6 +88,7 @@ fun ChatMessageList(
 @Composable
 fun ChatMessageCard(
     entry: ChatSessionEntry,
+    image: ImageAsset?,
     isManagementMode: Boolean,
     scope: ReorderableCollectionItemScope,
     onDelete: () -> Unit,
@@ -133,8 +137,8 @@ fun ChatMessageCard(
                     text = ResourceUtil.getSenderStringResource(entry.chatMessage.sender),
                     style = MaterialTheme.typography.titleMedium
                 )
-                (entry.chatMessage as? ImageMessage)?.let { message ->
-                    EmbeddedImage(message.image, stringResource(ChatSessionRes.string.image_message), Modifier.size(96.dp))
+                image?.let { asset ->
+                    EmbeddedImage(asset, stringResource(ChatSessionRes.string.image_message), Modifier.size(96.dp), thumbnail = true)
                 }
                 Text(
                     text = buildAnnotatedString {

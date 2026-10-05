@@ -5,7 +5,6 @@ import com.yuri.im.schema.EditingMessage
 import com.yuri.im.schema.ReceiveMessage
 import com.yuri.im.schema.SendMessage
 import com.yuri.im.schema.ImageMessage
-import com.yuri.im.schema.ImageAsset
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,10 +27,10 @@ internal data class JsonChatMessage(
     val send: JsonSendMessage? = null,
     val image: JsonImageMessage? = null,
 ) {
-    fun toModel(assets: Map<String, ImageAsset> = emptyMap()): ChatMessage {
+    fun toModel(): ChatMessage {
         require(listOf(receive, editing, send, image).count { it != null } == 1) { "Message must have exactly one content type" }
         return when {
-            image != null -> image.toModel(assets)
+            image != null -> image.toModel()
             receive != null -> receive.toModel()
             editing != null -> editing.toModel()
             send != null -> send.toModel()

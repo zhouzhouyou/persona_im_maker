@@ -1,6 +1,7 @@
 package com.yuri.im
 
 import com.yuri.im.json.JsonSerialUtil
+import com.yuri.im.json.PimSessionFile
 import com.yuri.im.schema.BackgroundParticle
 import com.yuri.im.schema.BuildInCustomMessageSender
 import com.yuri.im.schema.ChatSession
@@ -49,10 +50,8 @@ class JsonTest {
             ),
         )
 
-        val jsonString = JsonSerialUtil.toJson(chatSession)
-        println(jsonString)
-
-        val deserialized = JsonSerialUtil.fromJson(jsonString)
+        val bytes = PimSessionFile.encode(chatSession)
+        val deserialized = PimSessionFile.decode(bytes)
 
         assertEquals(chatSession, deserialized)
     }

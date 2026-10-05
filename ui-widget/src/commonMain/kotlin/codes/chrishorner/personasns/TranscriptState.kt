@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.CacheDrawScope
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import codes.chrishorner.personasns.TranscriptSizes.RenMessageCenter
 import com.yuri.im.schema.ChatMessage
 import com.yuri.im.schema.ChatSession
 import com.yuri.im.schema.EmotionMarker
+import com.yuri.im.schema.ImageAsset
 import com.yuri.im.schema.ImageMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -40,6 +42,7 @@ fun rememberTranscriptState(chatSession: ChatSession): TranscriptState {
 /** A message in the transcript with every needed for rendering. */
 data class Entry(
     val message: ChatMessage,
+    val image: ImageAsset?,
     val lineCoordinates: LineCoordinates,
     val emotionMarker: EmotionMarker,
     /** Animated percentage progress of the black line connecting this message to the next. */
@@ -137,6 +140,7 @@ class TranscriptState internal constructor(
         return EntryState(
             position = index,
             message = message,
+            image = (message as? ImageMessage)?.imageId?.let(chatSession.images::get),
             lineProgress = Animatable(initialValue = 0f),
             imageProgress = Animatable(if (message is ImageMessage) 0f else 1f).apply {
                 if (message is ImageMessage) coroutineScope.launch {
@@ -249,17 +253,20 @@ object TranscriptSizes {
     val MinLineWidth = 44.dp
     val MaxLineWidth = 60.dp
 
-    private fun CacheDrawScope.imageAvatarX(width: Float): Float =
-        ((width - 32.dp.toPx()).coerceAtMost(520.dp.toPx()) - 96.dp.toPx()).coerceAtLeast(0f)
+    fun imagePhotoWidth(available: Dp, image: ImageAsset): Dp =
+        minOf(available - 32.dp, 520.dp, 360.dp * image.width.toFloat() / image.height).coerceAtLeast(110.dp)
 
-    private fun CacheDrawScope.imageHeight(width: Float, message: ImageMessage): Float =
-        ((width - 32.dp.toPx()).coerceAtMost(520.dp.toPx()) * message.image.height / message.image.width)
+    private fun CacheDrawScope.imageAvatarX(width: Float, image: ImageAsset): Float =
+        (imagePhotoWidth(width.toDp(), image).toPx() - 96.dp.toPx()).coerceAtLeast(0f)
+
+    private fun CacheDrawScope.imageHeight(width: Float, image: ImageAsset): Float =
+        (imagePhotoWidth(width.toDp(), image).toPx() * image.height / image.width)
             .coerceIn(90.dp.toPx(), 360.dp.toPx()) + 24.dp.toPx()
 
     fun getTopDrawingOffset(scope: CacheDrawScope, entry: Entry): Offset = with(scope) {
         return when {
             entry.message is ImageMessage -> Offset(
-                x = imageAvatarX(size.width) * entry.imageProgress.value + 8.dp.toPx(),
+                x = imageAvatarX(size.width, requireNotNull(entry.image)) * entry.imageProgress.value + 8.dp.toPx(),
                 y = (size.height - AvatarSize.height.toPx()).coerceAtLeast(0f),
             )
             entry.message.fromSelf -> {
@@ -275,8 +282,8 @@ object TranscriptSizes {
         val verticalShift = size.height + EntrySpacing.toPx()
         return when {
             entry.message is ImageMessage -> Offset(
-                x = imageAvatarX(requireNotNull(globalWidth)) * entry.imageProgress.value + 8.dp.toPx(),
-                y = verticalShift + (imageHeight(requireNotNull(globalWidth), entry.message) - AvatarSize.height.toPx()).coerceAtLeast(0f) * entry.imageProgress.value,
+                x = imageAvatarX(requireNotNull(globalWidth), requireNotNull(entry.image)) * entry.imageProgress.value + 8.dp.toPx(),
+                y = verticalShift + (imageHeight(requireNotNull(globalWidth), requireNotNull(entry.image)) - AvatarSize.height.toPx()).coerceAtLeast(0f) * entry.imageProgress.value,
             )
             entry.message.fromSelf -> {
                 val horizontalShift = requireNotNull(globalWidth) - (RenMessageCenter.x.toPx() * 2f)
@@ -295,6 +302,7 @@ object TranscriptSizes {
 private class EntryState(
     val position: Int,
     val message: ChatMessage,
+    val image: ImageAsset?,
     val lineProgress: Animatable<Float, AnimationVector1D>,
     val avatarBackgroundScale: Animatable<Float, AnimationVector1D>,
     val avatarForegroundScale: Animatable<Float, AnimationVector1D>,
@@ -308,6 +316,7 @@ private class EntryState(
 
 private fun EntryState.toEntry() = Entry(
     message = message,
+    image = image,
     lineCoordinates = lineCoordinates,
     emotionMarker = message.emotionMarker,
     avatarBackgroundScale = avatarBackgroundScale.asState(),

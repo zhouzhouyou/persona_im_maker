@@ -8,7 +8,7 @@
     <string name="image_message">Image</string>
     <string name="choose_image">Choose image</string>
     <string name="replace_image">Replace image</string>
-    <string name="image_limits">PNG / JPEG · Up to 2 MB, 16 MP and 8192 pixels per side</string>
+    <string name="image_limits">PNG / JPEG · Input up to 25 MB and 32 megapixels · Stored at up to 2048 pixels per side</string>
     <string name="image_invalid">Unable to read this image. Choose a valid PNG or JPEG within the size limits.</string>
     <string name="playback_auto">Play with automatic layout</string>
     <string name="playback_full_screen">Play in full screen</string>
@@ -53,4 +53,7 @@
     <string name="background_particle_sakura">Sakura</string>
     <string name="background_particle_snowflake">Snowflake</string>
 
+    <string name="session_file_processing">Processing session file…</string>
+    <string name="file_import_failed">Could not import session: %1$s</string>
+    <string name="image_session_limit">Session images exceed 100 MB or 256 resources.</string>
 </resources>
