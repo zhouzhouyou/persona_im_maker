@@ -5,6 +5,11 @@
     <string name="chat_session_name">会话名称</string>
     <string name="btn_new">新建</string>
     <string name="playback_options">播放方式</string>
+    <string name="image_message">图片</string>
+    <string name="choose_image">选择图片</string>
+    <string name="replace_image">替换图片</string>
+    <string name="image_limits">PNG / JPEG · 最大 2 MB、1600 万像素，单边不超过 8192 像素</string>
+    <string name="image_invalid">无法读取图片，请选择尺寸限制内的有效 PNG 或 JPEG 图片。</string>
     <string name="playback_auto">自动布局播放</string>
     <string name="playback_full_screen">全屏播放</string>
     <string name="btn_management_mode">管理模式</string>

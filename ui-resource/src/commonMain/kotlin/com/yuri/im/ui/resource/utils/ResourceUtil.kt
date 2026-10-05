@@ -12,6 +12,7 @@ import com.yuri.im.schema.EmotionMarker
 import com.yuri.im.schema.MessageSender
 import com.yuri.im.schema.MessageSenderSelf
 import com.yuri.im.schema.ReceiveMessage
+import com.yuri.im.schema.ImageMessage
 import com.yuri.im.schema.ReceivedMessageSender
 import com.yuri.im.schema.StandardMessageSender
 import com.yuri.im.ui.resource.*
@@ -127,6 +128,8 @@ object ResourceUtil {
     fun getChatMessageBackgroundColor(chatMessage: ChatMessage): Color {
         return when (chatMessage) {
             is ReceiveMessage -> getSenderBackgroundColor(chatMessage.sender)
+            is ImageMessage -> (chatMessage.sender as? ReceivedMessageSender)?.let { getSenderBackgroundColor(it) }
+                ?: BackgroundColors.BG_UNSPECIFIED
             else -> BackgroundColors.BG_UNSPECIFIED
         }
     }

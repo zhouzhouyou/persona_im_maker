@@ -29,6 +29,7 @@ import codes.chrishorner.personasns.rememberTranscriptState
 import com.yuri.im.schema.BackgroundParticle
 import com.yuri.im.schema.ChatSession
 import com.yuri.im.schema.ReceiveMessage
+import com.yuri.im.schema.ReceivedMessageSender
 import com.yuri.im.ui.resource.MyResourcePack
 
 @Composable
@@ -82,7 +83,7 @@ fun ChatSessionView(
             )
 
             Portraits(
-                senders = chatSession.messages.filterIsInstance<ReceiveMessage>().map { it.sender }.distinct(),
+                senders = chatSession.messages.mapNotNull { it.sender as? ReceivedMessageSender }.distinct(),
                 modifier = Modifier.weight(1f),
             )
         }

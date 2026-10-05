@@ -30,6 +30,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yuri.im.schema.MessageSenderSelf
+import com.yuri.im.schema.ImageMessage
+import com.yuri.im.ui.resource.utils.EmbeddedImage
 import com.yuri.im.schema.PlainText
 import com.yuri.im.schema.ReceiveMessage
 import com.yuri.im.schema.ReplyOptions
@@ -40,6 +42,7 @@ import com.yuri.im.ui.resource.utils.ResourceUtil
 import com.yuri.persona_im_maker.chat.session.ChatSessionRes
 import com.yuri.persona_im_maker.chat.session.btn_delete
 import com.yuri.persona_im_maker.chat.session.btn_edit
+import com.yuri.persona_im_maker.chat.session.image_message
 import com.yuri.persona_im_maker.chat.session.editor.ChatSessionEntry
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -130,6 +133,9 @@ fun ChatMessageCard(
                     text = ResourceUtil.getSenderStringResource(entry.chatMessage.sender),
                     style = MaterialTheme.typography.titleMedium
                 )
+                (entry.chatMessage as? ImageMessage)?.let { message ->
+                    EmbeddedImage(message.image, stringResource(ChatSessionRes.string.image_message), Modifier.size(96.dp))
+                }
                 Text(
                     text = buildAnnotatedString {
                       when (val chatMessage = entry.chatMessage) {

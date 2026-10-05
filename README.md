@@ -30,10 +30,25 @@ is currently configured.
 Sessions currently use `TemporaryMemoryCache`; favorite senders use
 Multiplatform Settings. The session management navigation entry is unfinished
 (`TODO()`), and existing meaningful tests focus on JSON round trips.
-Custom sender JSON conversion and custom avatar lookup also contain `TODO()`
-branches. The existing `JsonTest.testSerialize` omits the required
-`backgroundParticle` constructor argument and cannot compile. It also exercises
-a custom sender, whose JSON conversion must be implemented before it can pass.
+Custom avatar lookup still contains a `TODO()` branch; custom sender JSON conversion is supported.
+
+## Image messages
+
+Choose **图片 / Image** when editing a message, then select a PNG or JPEG. The
+editor previews the image and lets you replace it or switch back to text. Images
+can be sent by any existing sender, including the player. Each file is limited
+to 2 MB, 16 million pixels, and 8192 pixels per side.
+
+Playback first shows the sender with a camera icon for 500 ms. The photo then
+rotates and unfolds through a polygon mask over 420 ms, leaving a black frame,
+a lower-right sender portrait, and a white underline. The transcript grows and
+scrolls as the photo opens; advancing is blocked until the reveal completes.
+Photos remain in the transcript. There is no large-image viewer in this version.
+
+JSON format version 2 embeds image bytes as Base64 in an `images` resource table;
+messages reference their image by ID. Repeated references export only one copy.
+Version 1 text sessions remain readable. Older app versions cannot read exports containing image messages. Sessions still use the existing in-memory repository, so export a
+session to keep it across restarts.
 
 ## Build and Compose versions
 
@@ -100,6 +115,17 @@ Validation on October 5, 2026 with Temurin JDK 21.0.12.1:
   and cherry-blossom particles animated. No browser console warnings or errors
   were captured during these checks. Import/export, persistence across restarts,
   and Android device UI were not covered by this browser check.
+
+Image-message validation on October 5, 2026:
+
+- Full JVM tests, Android debug assembly, and JVM/JS/Wasm compilation passed.
+- JSON tests cover shared-image round trips, version 1 compatibility, missing
+  references, invalid metadata/format/size, and conflicting resource IDs.
+- Wasm UI checks at 1280×720 and 390×844 covered selecting/saving/replacing an
+  image, mixed text/image JSON import, received and self image playback,
+  camera/reveal transitions, connecting lines, and scrolling to subsequent text.
+  A corrupt JPEG showed an error and preserved the previously selected image.
+- Android file selection and animation have been compiled but not checked on a device.
 
 ### Copyright
 
