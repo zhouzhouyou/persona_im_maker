@@ -33,7 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ChatSessionEditorView(
     model: ChatSessionEditorViewModel,
-    navToPlay: (id: String) -> Unit,
+    navToPlay: (id: String, layout: PlaybackLayout) -> Unit,
     back: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -191,18 +191,16 @@ private fun ChatSessionEditorMenuActions(
     updateChatMessageEditScreenState: (ChatMessageEditScreenState) -> Unit,
     updateImportSessionDialogState: (ImportSessionDialogState) -> Unit,
     saveEnabled: Boolean,
-    navToPlay: (String) -> Unit,
+    navToPlay: (String, PlaybackLayout) -> Unit,
 ) {
     with(rowScope) {
-        IconButton(
-            onClick = {
+        PlaybackButton(
+            enabled = saveEnabled,
+            onPlay = { layout ->
                 sendUIEvent(ChatSessionEditorUIEvent.Save)
-                navToPlay(id)
+                navToPlay(id, layout)
             },
-            enabled = saveEnabled
-        ) {
-            Icon(MyIconPack.Play, contentDescription = null)
-        }
+        )
         IconButton(onClick = {
             updateChatMessageEditScreenState(ChatMessageEditScreenState.New(MessageSenderSelf))
         }) {

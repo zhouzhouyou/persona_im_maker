@@ -4,6 +4,9 @@
     <string name="chat_session_editor">Chat Session Editor</string>
     <string name="chat_session_name">Session Name</string>
     <string name="btn_new">New</string>
+    <string name="playback_options">Playback options</string>
+    <string name="playback_auto">Play with automatic layout</string>
+    <string name="playback_full_screen">Play in full screen</string>
     <string name="btn_management_mode">Management Mode</string>
     <string name="btn_exit_management_mode">Exit Management Mode</string>
     <string name="btn_save">Save</string>
