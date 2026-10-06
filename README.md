@@ -49,8 +49,11 @@ cache uses 256-pixel editor thumbnails and bounded playback bitmaps. Session
 resources are limited to 256 images and 100 MiB.
 
 Playback shows the sender with a camera icon for 500 ms, then rotates and unfolds
-the photo through a polygon mask over 420 ms. A black frame, lower-right sender
-portrait and white underline remain. Layout and scrolling follow the expansion;
+the photo through a polygon mask over 420 ms. A black frame and lower-right
+sender portrait remain for received photos. Player photos align right without
+an avatar, matching sent text; the standalone underline has been removed.
+Connecting-line shadows extend continuously from the line rather than floating
+below it. Layout and scrolling follow the expansion;
 advancing is blocked until it completes. Photos remain in the transcript. There
 is no large-image viewer.
 
@@ -164,6 +167,9 @@ Image-message and session-package validation on October 6, 2026:
   dialogs were observed. Full desktop dialog round-trip UI validation remains
   incomplete because native automation timed out after closing the open dialog
   and coordinate actions reported no available window.
+- A follow-up Wasm playback check verified received photos with portraits,
+  right-aligned player photos without portraits, removal of the extra underline,
+  and attached shadows on image/image and image/text connections.
 - Android SAF CreateDocument/OpenDocument contracts, URI stream reads/writes
   and ActivityResultRegistry initialization were verified against the installed
   FileKit version's source. Android dialogs and animations have not been checked

@@ -4,11 +4,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.lerp
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 import com.yuri.im.schema.ReplyOptions
 
@@ -22,6 +22,7 @@ fun Modifier.drawConnectingLine(entry1: Entry, entry2: Entry?, globalWidth: Int?
 
     return drawWithCache {
         val linePath = Path()
+        val shadowPath = Path()
         val topOffset = TranscriptSizes.getTopDrawingOffset(this, entry1)
         val topLeft = entry1.lineCoordinates.leftPoint + topOffset
         val topRight = entry1.lineCoordinates.rightPoint + topOffset
@@ -49,10 +50,22 @@ fun Modifier.drawConnectingLine(entry1: Entry, entry2: Entry?, globalWidth: Int?
                 close()
             }
 
-            translate(top = 16.dp.toPx()) {
-                drawIntoCanvas {
-                    it.drawPath(linePath, shadowPaint)
-                }
+            // Extrude the same quad downward, joining the shadow to the line.
+            // Translating a separate quad leaves gaps on shallow photo connections.
+            val shift = Offset(0f, 16.dp.toPx())
+            val shadowPoints = if (currentBottomLeft.x >= topLeft.x) {
+                listOf(topLeft, topRight, currentBottomRight, currentBottomRight + shift,
+                    currentBottomLeft + shift, topLeft + shift)
+            } else {
+                listOf(topLeft, topRight, topRight + shift, currentBottomRight + shift,
+                    currentBottomLeft + shift, currentBottomLeft)
+            }
+            shadowPath.rewind()
+            shadowPath.moveTo(shadowPoints[0].x, shadowPoints[0].y)
+            shadowPoints.drop(1).forEach { shadowPath.lineTo(it.x, it.y) }
+            shadowPath.close()
+            drawIntoCanvas {
+                it.drawPath(shadowPath, shadowPaint)
             }
 
             drawPath(linePath, Color.Black)

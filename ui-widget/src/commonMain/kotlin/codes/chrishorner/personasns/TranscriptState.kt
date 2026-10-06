@@ -118,7 +118,7 @@ class TranscriptState internal constructor(
         val width = randomBetween(MinLineWidth.toPx(), MaxLineWidth.toPx())
 
         val lineCoordinates = when {
-            message.fromSelf && message !is ImageMessage -> {
+            message.fromSelf -> {
                 val leftX = RenMessageCenter.x.toPx() - (width / 2f)
                 val y = RenMessageCenter.y.toPx()
                 LineCoordinates(
@@ -265,6 +265,10 @@ object TranscriptSizes {
 
     fun getTopDrawingOffset(scope: CacheDrawScope, entry: Entry): Offset = with(scope) {
         return when {
+            entry.message is ImageMessage && entry.message.fromSelf -> Offset(
+                x = size.width - RenMessageCenter.x.toPx() * 2f,
+                y = (size.height - AvatarSize.height.toPx()).coerceAtLeast(0f),
+            )
             entry.message is ImageMessage -> Offset(
                 x = imageAvatarX(size.width, requireNotNull(entry.image)) * entry.imageProgress.value + 8.dp.toPx(),
                 y = (size.height - AvatarSize.height.toPx()).coerceAtLeast(0f),
@@ -281,6 +285,10 @@ object TranscriptSizes {
     fun getBottomDrawingOffset(scope: CacheDrawScope, entry: Entry, globalWidth: Float? = null): Offset = with(scope) {
         val verticalShift = size.height + EntrySpacing.toPx()
         return when {
+            entry.message is ImageMessage && entry.message.fromSelf -> Offset(
+                x = requireNotNull(globalWidth) - RenMessageCenter.x.toPx() * 2f,
+                y = verticalShift + (imageHeight(requireNotNull(globalWidth), requireNotNull(entry.image)) - AvatarSize.height.toPx()).coerceAtLeast(0f) * entry.imageProgress.value,
+            )
             entry.message is ImageMessage -> Offset(
                 x = imageAvatarX(requireNotNull(globalWidth), requireNotNull(entry.image)) * entry.imageProgress.value + 8.dp.toPx(),
                 y = verticalShift + (imageHeight(requireNotNull(globalWidth), requireNotNull(entry.image)) - AvatarSize.height.toPx()).coerceAtLeast(0f) * entry.imageProgress.value,
