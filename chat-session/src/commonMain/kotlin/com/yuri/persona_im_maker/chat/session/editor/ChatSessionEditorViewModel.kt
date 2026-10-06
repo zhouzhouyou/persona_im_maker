@@ -35,9 +35,7 @@ data class ChatSessionEditorViewState(
     val entries: List<ChatSessionEntry> = emptyList(),
     val favoriteSenders: List<MessageSender> = emptyList(),
     val snackbarMessage: SnackbarMessage? = null,
-    // only string now
-    val setToClipboardContent: String? = null,
-    val importSessionJsonValidateTaskState: TaskState<Unit, Unit, String> = Idle
+    val images: Map<String, ImageAsset> = emptyMap(),
 ) : ViewState
 
 sealed interface ChatSessionEditorViewEvent : ViewEvent {
@@ -46,7 +44,8 @@ sealed interface ChatSessionEditorViewEvent : ViewEvent {
     ) : ChatSessionEditorViewEvent
 
     data class UpdateEntries(
-        val entries: List<ChatSessionEntry>
+        val entries: List<ChatSessionEntry>,
+        val images: Map<String, ImageAsset>,
     ) : ChatSessionEditorViewEvent
 
     data class UpdateName(
@@ -65,13 +64,8 @@ sealed interface ChatSessionEditorViewEvent : ViewEvent {
         val message: SnackbarMessage?
     ) : ChatSessionEditorViewEvent
 
-    data class UpdateSetToClipboardContent(
-        val content: String?
-    ) : ChatSessionEditorViewEvent
+    data class ReplaceSession(val session: ChatSession, val entries: List<ChatSessionEntry>) : ChatSessionEditorViewEvent
 
-    data class ImportSessionJsonValidateTaskState(
-        val taskState: TaskState<Unit, Unit, String>
-    ) : ChatSessionEditorViewEvent
 }
 
 sealed interface ChatSessionEditorUIEvent : UIEvent {
@@ -82,11 +76,13 @@ sealed interface ChatSessionEditorUIEvent : UIEvent {
 
     data class AddEntry(
         val chatMessage: ChatMessage,
+        val image: ImageAsset? = null,
     ) : ChatSessionEditorUIEvent
 
     data class ModifyEntry(
         val id: Int,
-        val chatMessage: ChatMessage
+        val chatMessage: ChatMessage,
+        val image: ImageAsset? = null,
     ) : ChatSessionEditorUIEvent
 
     data class DeleteEntry(
@@ -105,14 +101,6 @@ sealed interface ChatSessionEditorUIEvent : UIEvent {
 
     data object ClearSnackbar : ChatSessionEditorUIEvent
 
-    data object ExportSession : ChatSessionEditorUIEvent
-
-    data object ClearSetToClipboardContent : ChatSessionEditorUIEvent
-
-    data class ImportSession(val jsonString: String) : ChatSessionEditorUIEvent
-
-    data object IdleImportSessionValidate : ChatSessionEditorUIEvent
-
     data class UpdateBackgroundParticle(
         val backgroundParticle: BackgroundParticle
     ) : ChatSessionEditorUIEvent
@@ -127,7 +115,7 @@ private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorVie
         }
 
         is ChatSessionEditorViewEvent.UpdateEntries -> {
-            previousState.copy(entries = event.entries)
+            previousState.copy(entries = event.entries, images = event.images)
         }
 
         is ChatSessionEditorViewEvent.UpdateName -> {
@@ -142,13 +130,12 @@ private val myReducer = Reducer<ChatSessionEditorViewState, ChatSessionEditorVie
             previousState.copy(snackbarMessage = event.message)
         }
 
-        is ChatSessionEditorViewEvent.UpdateSetToClipboardContent -> {
-            previousState.copy(setToClipboardContent = event.content)
-        }
-
-        is ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState -> {
-            previousState.copy(importSessionJsonValidateTaskState = event.taskState)
-        }
+        is ChatSessionEditorViewEvent.ReplaceSession -> previousState.copy(
+            name = event.session.alias,
+            backgroundParticle = event.session.backgroundParticle,
+            entries = event.entries,
+            images = event.session.images,
+        )
 
         is ChatSessionEditorViewEvent.UpdateBackgroundParticle -> {
             previousState.copy(backgroundParticle = event.backgroundParticle)
@@ -197,7 +184,7 @@ class ChatSessionEditorViewModel(
 
         when (val chatSessionResp = chatSessionRepo.get(currentSessionID)) {
             is DataOf -> {
-                updateEntries(chatSessionResp.data.mapToChatSessionEntryList())
+                replaceSession(chatSessionResp.data)
                 sendEvent(
                     ChatSessionEditorViewEvent.UpdateBackgroundParticle(chatSessionResp.data.backgroundParticle)
                 )
@@ -225,11 +212,30 @@ class ChatSessionEditorViewModel(
 
     private var entryID = 0
 
-    private fun updateEntries(entries: List<ChatSessionEntry>) {
-        sendEvent(
-            ChatSessionEditorViewEvent.UpdateEntries(entries)
-        )
+    private fun updateEntries(entries: List<ChatSessionEntry>, image: ImageAsset? = null) {
+        val resources = state.value.images.toMutableMap()
+        val existing = image?.let { asset -> resources.values.firstOrNull {
+            it.mimeType == asset.mimeType && it.width == asset.width && it.height == asset.height && it.bytes.contentEquals(asset.bytes)
+        } ?: asset.also { resources[it.id] = it } }
+        val content = entries.map { entry ->
+            val message = entry.chatMessage
+            if (message is ImageMessage && image != null && message.imageId == image.id)
+                entry.copy(chatMessage = message.copy(imageId = requireNotNull(existing).id)) else entry
+        }
+        val used = content.mapNotNull { (it.chatMessage as? ImageMessage)?.imageId }.toSet()
+        val referenced = resources.filterKeys { it in used }
+        if (referenced.size > ImageAsset.MAX_RESOURCES || referenced.values.sumOf { it.bytes.size.toLong() } > ImageAsset.MAX_SESSION_BYTES) {
+            viewModelScope.launch { toast(getString(ChatSessionRes.string.image_session_limit)) }
+            return
+        }
+        sendEvent(ChatSessionEditorViewEvent.UpdateEntries(content, referenced))
     }
+
+    fun replaceSession(session: ChatSession) {
+        sendEvent(ChatSessionEditorViewEvent.ReplaceSession(session, session.mapToChatSessionEntryList()))
+    }
+
+    fun showFileResult(message: String) = toast(message)
 
     /**
      * move the entry with id from startIndex to endIndex
@@ -242,24 +248,16 @@ class ChatSessionEditorViewModel(
         return newEntries
     }
 
-    private fun buildChatSession(): ChatSession {
+    fun buildChatSession(): ChatSession {
         val chatSession = ChatSession(
             sessionID = state.value.id, // 暂时使用0，后续可以从持久化存储中获取
             alias = state.value.name,
             backgroundParticle = state.value.backgroundParticle,
-            messages = state.value.entries.map {
-               it.chatMessage
-            }
+            messages = state.value.entries.map { it.chatMessage },
+            images = state.value.images,
         )
 
         return chatSession
-    }
-
-    private suspend fun buildChatSessionJson(): String {
-        val chatSession = buildChatSession()
-
-        val json = JsonSerialUtil.toJson(chatSession)
-        return json
     }
 
     fun save() = viewModelScope.launch(Dispatchers.Default) {
@@ -290,51 +288,6 @@ class ChatSessionEditorViewModel(
         )
     }
 
-    private fun exportAsJson() = viewModelScope.launch(Dispatchers.Default) {
-        // TODO: Add loading dialog support
-        runCatching {
-            val json = buildChatSessionJson()
-            sendEvent(
-                ChatSessionEditorViewEvent.UpdateSetToClipboardContent(json)
-            )
-        }.onSuccess {
-            toast(getString(ChatSessionRes.string.export_session_success))
-        }.onFailure {
-            toast(getString(
-                ChatSessionRes.string.failed_to_export_session,
-                it.message ?: it.toString()
-            ))
-        }
-
-    }
-
-    private fun importFromJson(jsonString: String) = viewModelScope.launch(Dispatchers.Default) {
-        sendEvent(
-            ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState(ProgressOf(Unit))
-        )
-
-        runCatching {
-            JsonSerialUtil.fromJson(jsonString)
-        }.onSuccess {
-            sendEvent(
-                ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState(DataOf(Unit))
-            )
-            toast(getString(ChatSessionRes.string.import_session_success))
-            updateEntries(it.mapToChatSessionEntryList())
-        }.onFailure {
-            sendEvent(
-                ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState(
-                    ErrorOf(
-                        getString(
-                            ChatSessionRes.string.failed_to_parse_json,
-                            it.message ?: it
-                        )
-                    )
-                )
-            )
-        }
-    }
-
     override fun sendUIEvent(event: ChatSessionEditorUIEvent) {
         when (event) {
             is ChatSessionEditorUIEvent.UpdateName -> {
@@ -348,7 +301,8 @@ class ChatSessionEditorViewModel(
                     state.value.entries + ChatSessionEntry(
                         id = entryID++,
                         chatMessage = event.chatMessage
-                    )
+                    ),
+                    event.image,
                 )
             }
 
@@ -368,7 +322,8 @@ class ChatSessionEditorViewModel(
                         } else {
                             it
                         }
-                    }
+                    },
+                    event.image,
                 )
             }
 
@@ -389,26 +344,6 @@ class ChatSessionEditorViewModel(
 
             ChatSessionEditorUIEvent.ClearSnackbar -> {
                 toast(null)
-            }
-
-            ChatSessionEditorUIEvent.ExportSession -> {
-                exportAsJson()
-            }
-
-            ChatSessionEditorUIEvent.ClearSetToClipboardContent -> {
-                sendEvent(
-                    ChatSessionEditorViewEvent.UpdateSetToClipboardContent(null)
-                )
-            }
-
-            is ChatSessionEditorUIEvent.ImportSession -> {
-                importFromJson(event.jsonString)
-            }
-
-            ChatSessionEditorUIEvent.IdleImportSessionValidate -> {
-                sendEvent(
-                    ChatSessionEditorViewEvent.ImportSessionJsonValidateTaskState(Idle)
-                )
             }
 
             is ChatSessionEditorUIEvent.UpdateBackgroundParticle -> {

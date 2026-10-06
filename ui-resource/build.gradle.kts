@@ -73,6 +73,9 @@ kotlin {
 
 kotlin {
     sourceSets {
+        jvmTest.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }

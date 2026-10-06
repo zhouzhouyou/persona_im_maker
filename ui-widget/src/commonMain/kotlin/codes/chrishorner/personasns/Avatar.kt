@@ -19,7 +19,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.yuri.im.schema.ReceiveMessage
+import com.yuri.im.schema.MessageSenderSelf
+import com.yuri.im.schema.ReceivedMessageSender
+import com.yuri.im.ui.resource.icon.MyIconPack
+import com.yuri.im.ui.resource.icon.myiconpack.Glasses
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import com.yuri.im.ui.resource.utils.ResourceUtil
 
 /**
@@ -37,10 +41,12 @@ fun Avatar(entry: Entry) {
       }
       .clip(with(LocalDensity.current) { avatarClipBox() })
   ) {
-      when (entry.message) {
-          is ReceiveMessage -> {
+      val sender = entry.message.sender
+      when (sender) {
+          is ReceivedMessageSender, MessageSenderSelf -> {
               Image(
-                  painter = ResourceUtil.getReceivedMessageAvatarPainter(entry.message),
+                  painter = if (sender is ReceivedMessageSender) ResourceUtil.getReceivedMessageSenderAvatarPainter(sender)
+                      else rememberVectorPainter(MyIconPack.Glasses),
                   contentDescription = null,
                   modifier = Modifier
                       .size(80.dp)

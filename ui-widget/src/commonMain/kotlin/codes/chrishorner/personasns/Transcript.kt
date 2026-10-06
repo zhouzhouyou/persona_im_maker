@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.yuri.im.schema.PlainText
 import com.yuri.im.schema.ReceiveMessage
 import com.yuri.im.schema.ReplyOptions
+import com.yuri.im.schema.ImageMessage
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.foundation.gestures.scrollBy
 
 /**
  * Scrollable list of messages - including the background line connecting each entry.
@@ -46,6 +49,18 @@ fun Transcript(entries: List<Entry>, modifier: Modifier = Modifier, selectOption
       listState.animateScrollToItem(totalItemCount - 1)
     }
   }
+  val lastEntry = entries.lastOrNull()
+  LaunchedEffect(lastEntry) {
+      if (lastEntry?.message is ImageMessage) {
+          snapshotFlow { lastEntry.imageProgress.value }.collect {
+              val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+              if (lastVisible != null && lastVisible.index >= entries.lastIndex) {
+                  val overflow = lastVisible.offset + lastVisible.size - listState.layoutInfo.viewportEndOffset
+                  if (overflow > 0) listState.scrollBy(overflow.toFloat())
+              }
+          }
+      }
+  }
 
   var globalWidth by remember { mutableStateOf(0) }
   LazyColumn(
@@ -62,6 +77,7 @@ fun Transcript(entries: List<Entry>, modifier: Modifier = Modifier, selectOption
       items = entries,
     ) { index, entry ->
         when (entry.message) {
+            is ImageMessage -> ImageEntry(entry, Modifier.drawConnectingLine(entry, entries.getOrNull(index + 1), globalWidth))
             is PlainText, is ReplyOptions -> {
                 Reply(
                     entry = entry,

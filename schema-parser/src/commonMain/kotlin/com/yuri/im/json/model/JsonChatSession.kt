@@ -1,47 +1,31 @@
 package com.yuri.im.json.model
 
-import com.yuri.im.schema.ChatSession
-import kotlinx.serialization.SerialName
+import com.yuri.im.schema.*
 import kotlinx.serialization.Serializable
 
-/**
- * Chat session. 对话。
- *
- * @property sessionID 会话ID
- * @property alias 会话别名
- * @property messages 会话中的消息
- */
 @Serializable
 internal data class JsonChatSession(
-    @SerialName("sessionID")
     val sessionID: String,
-    @SerialName("alias")
     val alias: String,
-    @SerialName("messages")
     val messages: List<JsonChatMessage>,
-    @SerialName("schemaVersion")
-    val schemaVersion: Int,
-    @SerialName("backgroundParticle")
     val backgroundParticle: JsonBackgroundParticle,
+    val formatVersion: Int,
+    val images: List<JsonImageAsset> = emptyList(),
 ) {
-    fun toModel(): ChatSession {
-        return ChatSession(
-            sessionID,
-            alias,
-            messages.map { it.toModel() },
-            backgroundParticle.toModel(),
-        )
+    fun toModel(resources: Map<String, ByteArray>): ChatSession {
+        require(formatVersion == 1) { "Unsupported session format: $formatVersion" }
+        require(images.map { it.id }.distinct().size == images.size) { "Duplicate image IDs" }
+        require(images.all { it.mimeType in listOf("image/png", "image/jpeg") }) { "Unsupported image type" }
+        val assets = images.associate { it.id to it.toModel(requireNotNull(resources[it.path]) { "Missing image resource: ${it.id}" }) }
+        require(resources.keys == images.map { it.path }.toSet()) { "Unexpected resource entries" }
+        val content = messages.map { it.toModel() }
+        require(content.filterIsInstance<ImageMessage>().all { it.imageId in assets }) { "Missing image reference" }
+        return ChatSession(sessionID, alias, content, backgroundParticle.toModel(), assets)
     }
 }
-
 internal fun ChatSession.toDto(): JsonChatSession {
-    return JsonChatSession(
-        sessionID,
-        alias,
-        messages.map { it.toDto() },
-        CURRENT_SCHEMA_VERSION,
-        backgroundParticle.toDto(),
-    )
+    val referenced = messages.filterIsInstance<ImageMessage>().map { it.imageId }.toSet()
+    require(referenced.all { it in images }) { "Missing image reference" }
+    val assets = referenced.map { id -> requireNotNull(images[id]).validate().also { require(it.id == id) } }
+    return JsonChatSession(sessionID, alias, messages.map { it.toDto() }, backgroundParticle.toDto(), formatVersion = 1, images = assets.map { it.toDto() })
 }
-
-const val CURRENT_SCHEMA_VERSION = 1

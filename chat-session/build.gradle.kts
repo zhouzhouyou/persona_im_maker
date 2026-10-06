@@ -64,6 +64,7 @@ kotlin {
                 implementation(libs.multiplatform.settings.serialization)
                 implementation(libs.multiplatform.settings.noArg)
                 implementation(libs.filekit.core)
+                implementation(libs.filekit.dialogs.compose)
                 implementation(libs.compose.material3.adaptive)
                 implementation(libs.compose.material3.adaptive.nav3)
 

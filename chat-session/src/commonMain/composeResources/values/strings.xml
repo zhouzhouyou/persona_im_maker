@@ -5,6 +5,11 @@
     <string name="chat_session_name">Session Name</string>
     <string name="btn_new">New</string>
     <string name="playback_options">Playback options</string>
+    <string name="image_message">Image</string>
+    <string name="choose_image">Choose image</string>
+    <string name="replace_image">Replace image</string>
+    <string name="image_limits">PNG / JPEG · Input up to 25 MB and 32 megapixels · Stored at up to 2048 pixels per side</string>
+    <string name="image_invalid">Unable to read this image. Choose a valid PNG or JPEG within the size limits.</string>
     <string name="playback_auto">Play with automatic layout</string>
     <string name="playback_full_screen">Play in full screen</string>
     <string name="btn_management_mode">Management Mode</string>
@@ -48,4 +53,14 @@
     <string name="background_particle_sakura">Sakura</string>
     <string name="background_particle_snowflake">Snowflake</string>
 
+    <string name="session_file_processing">Processing session file…</string>
+    <string name="file_import_failed">Could not import session: %1$s</string>
+    <string name="image_session_limit">Session images exceed 100 MB or 256 resources.</string>
+    <string name="export_file_title">Export session file</string>
+    <string name="export_file_name">File name</string>
+    <string name="export_download_notice">This browser cannot choose a save location. After confirmation, the file follows your browser download settings. Enable asking before downloads in your browser to choose a location each time.</string>
+    <string name="export_save_notice">Continue to the system save dialog to choose where to save the file.</string>
+    <string name="export_cancel">Cancel</string>
+    <string name="export_download_confirm">Confirm download</string>
+    <string name="export_save_confirm">Choose save location</string>
 </resources>

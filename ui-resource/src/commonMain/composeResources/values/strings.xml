@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="image_loading">Loading image…</string>
+    <string name="image_unavailable">Image unavailable</string>
     <string name="fab_expanded">expanded</string>
     <string name="fab_collapsed">collapsed</string>
 

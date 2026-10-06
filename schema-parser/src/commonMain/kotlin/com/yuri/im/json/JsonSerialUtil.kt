@@ -33,13 +33,13 @@ object JsonSerialUtil {
         encodeDefaults = false
     }
 
-    fun fromJson(jsonString: String): ChatSession {
+    internal fun fromManifest(jsonString: String, resources: Map<String, ByteArray>): ChatSession {
         val jsonChatSession = json.decodeFromString(JsonChatSession.serializer(), jsonString)
 
-        return jsonChatSession.toModel()
+        return jsonChatSession.toModel(resources)
     }
 
-    fun toJson(chatSession: ChatSession): String {
+    internal fun toManifest(chatSession: ChatSession): String {
         val jsonChatSession = chatSession.toDto()
 
         return json.encodeToString(jsonChatSession)

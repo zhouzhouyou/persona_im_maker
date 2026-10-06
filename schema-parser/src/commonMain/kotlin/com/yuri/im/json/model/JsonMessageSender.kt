@@ -24,7 +24,7 @@ internal data class JsonBuildInCustomMessageSenderWrapper(@SerialName("value") v
 fun JsonMessageSender.toMessageSender(): MessageSender {
     return when (this) {
         is JsonMessageSenderSelf -> MessageSenderSelf
-        is JsonCustomMessageSender -> TODO()
+        is JsonCustomMessageSender -> toModel()
         is JsonStandardMessageSenderWrapper -> value.toModel()
         is JsonBuildInCustomMessageSenderWrapper -> value.toModel()
     }
@@ -35,6 +35,6 @@ fun MessageSender.toJsonMessageSender(): JsonMessageSender {
         is MessageSenderSelf -> JsonMessageSenderSelf
         is StandardMessageSender -> JsonStandardMessageSenderWrapper(toDto())
         is BuildInCustomMessageSender -> JsonBuildInCustomMessageSenderWrapper(toDto())
-        is CustomMessageSender -> TODO()
+        is CustomMessageSender -> toDto()
     }
 }

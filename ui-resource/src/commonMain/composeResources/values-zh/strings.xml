@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="image_loading">正在加载图片…</string>
+    <string name="image_unavailable">图片无法显示</string>
     <string name="fab_expanded">已展开</string>
     <string name="fab_collapsed">已收起</string>
 

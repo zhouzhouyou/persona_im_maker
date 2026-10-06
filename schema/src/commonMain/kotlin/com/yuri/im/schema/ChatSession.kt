@@ -13,4 +13,5 @@ data class ChatSession(
     val alias: String,
     val messages: List<ChatMessage>,
     val backgroundParticle: BackgroundParticle,
+    val images: Map<String, ImageAsset> = emptyMap(),
 )

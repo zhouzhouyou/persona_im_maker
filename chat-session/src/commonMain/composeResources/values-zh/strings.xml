@@ -5,6 +5,11 @@
     <string name="chat_session_name">会话名称</string>
     <string name="btn_new">新建</string>
     <string name="playback_options">播放方式</string>
+    <string name="image_message">图片</string>
+    <string name="choose_image">选择图片</string>
+    <string name="replace_image">替换图片</string>
+    <string name="image_limits">PNG / JPEG · 输入最大 25 MB、3200 万像素 · 保存时最长边不超过 2048 像素</string>
+    <string name="image_invalid">无法读取图片，请选择尺寸限制内的有效 PNG 或 JPEG 图片。</string>
     <string name="playback_auto">自动布局播放</string>
     <string name="playback_full_screen">全屏播放</string>
     <string name="btn_management_mode">管理模式</string>
@@ -47,4 +52,14 @@
     <string name="background_particle_none">无</string>
     <string name="background_particle_sakura">樱花</string>
     <string name="background_particle_snowflake">雪花</string>
+    <string name="session_file_processing">正在处理会话文件…</string>
+    <string name="file_import_failed">无法导入会话：%1$s</string>
+    <string name="image_session_limit">会话图片总量不能超过 100 MB 或 256 张。</string>
+    <string name="export_file_title">导出会话文件</string>
+    <string name="export_file_name">文件名</string>
+    <string name="export_download_notice">当前浏览器不支持选择保存位置。确认后将按浏览器下载设置保存；如需每次选择位置，请开启浏览器的下载前询问设置。</string>
+    <string name="export_save_notice">确认后将打开系统保存对话框，由你选择文件的保存位置。</string>
+    <string name="export_cancel">取消</string>
+    <string name="export_download_confirm">确认下载</string>
+    <string name="export_save_confirm">选择保存位置</string>
 </resources>
