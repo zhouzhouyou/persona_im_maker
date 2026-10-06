@@ -57,8 +57,14 @@ below it. Layout and scrolling follow the expansion;
 advancing is blocked until it completes. Photos remain in the transcript. There
 is no large-image viewer.
 
-Export opens a native save dialog on Android/JVM and initiates a browser download
-on JS/Wasm. Android uses SAF `ACTION_CREATE_DOCUMENT` for saving and
+Export first asks the user to confirm/edit the filename. Android/JVM then
+open a native save dialog. JS/Wasm use showSaveFilePicker when available in a
+secure context; unsupported browsers display an explicit download-settings
+notice and require confirmation before starting a download. Cancelling a picker
+does not fall back to an automatic download. Package bytes are prepared before
+confirmation, so the browser picker is invoked directly within the confirm
+click's user-activation scope. See the
+[save picker API requirements](https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker). Android uses SAF `ACTION_CREATE_DOCUMENT` for saving and
 `ACTION_OPEN_DOCUMENT` for importing through FileKit 0.12.0. Returned content
 URIs are read/written with `ContentResolver` streams, not filesystem paths;
 no broad storage permission is required. The Compose picker initializes its
@@ -193,3 +199,8 @@ All art and character designs in this repository are the property of Atlus Co., 
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+Export confirmation follow-up: Android/JVM/JS/Wasm compilation passed. The
+Wasm filename confirmation and save-location action were checked in the in-app
+browser. Completing the native save dialog was not automated because access
+to the Codex host window is prohibited by the computer-use tool.

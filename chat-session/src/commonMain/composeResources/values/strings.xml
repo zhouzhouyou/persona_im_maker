@@ -56,4 +56,11 @@
     <string name="session_file_processing">Processing session file…</string>
     <string name="file_import_failed">Could not import session: %1$s</string>
     <string name="image_session_limit">Session images exceed 100 MB or 256 resources.</string>
+    <string name="export_file_title">Export session file</string>
+    <string name="export_file_name">File name</string>
+    <string name="export_download_notice">This browser cannot choose a save location. After confirmation, the file follows your browser download settings. Enable asking before downloads in your browser to choose a location each time.</string>
+    <string name="export_save_notice">Continue to the system save dialog to choose where to save the file.</string>
+    <string name="export_cancel">Cancel</string>
+    <string name="export_download_confirm">Confirm download</string>
+    <string name="export_save_confirm">Choose save location</string>
 </resources>

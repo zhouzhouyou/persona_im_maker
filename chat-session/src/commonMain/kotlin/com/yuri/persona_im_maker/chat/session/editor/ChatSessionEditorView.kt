@@ -24,6 +24,7 @@ import com.yuri.persona_im_maker.chat.session.*
 import com.yuri.persona_im_maker.chat.session.editor.ui.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CancellationException
 import io.github.vinceglb.filekit.dialogs.FileKitType
@@ -59,6 +60,8 @@ fun ChatSessionEditorView(
     }
 
     var fileBusy by remember { mutableStateOf(false) }
+    var exportBytes by remember { mutableStateOf<ByteArray?>(null) }
+    var exportFilename by remember { mutableStateOf("") }
     val filePicker = rememberFilePickerLauncher(type = FileKitType.File(listOf("pim"))) { file ->
         if (file != null && !fileBusy) coroutineScope.launch {
             fileBusy = true
@@ -77,13 +80,14 @@ fun ChatSessionEditorView(
         }
     }
     val exportSession: () -> Unit = {
-        if (!fileBusy) coroutineScope.launch {
+        if (!fileBusy && exportBytes == null) coroutineScope.launch {
             fileBusy = true
             try {
                 val session = model.buildChatSession()
                 val bytes = withContext(Dispatchers.Default) { PimSessionFile.encode(session) }
                 val filename = session.alias.map { if (it < ' ' || it in "\\/:*?\"<>|") '_' else it }.joinToString("").trim().take(80).ifBlank { "persona-chat" }
-                if (saveSessionFile(bytes, filename)) model.showFileResult(getString(ChatSessionRes.string.export_session_success))
+                exportFilename = filename
+                exportBytes = bytes
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { model.showFileResult(getString(ChatSessionRes.string.failed_to_export_session, e.message ?: "")) }
             finally { fileBusy = false }
@@ -180,6 +184,43 @@ fun ChatSessionEditorView(
             model.sendUIEvent(ChatSessionEditorUIEvent.UpdateFavoriteSender(it))
         }
     )
+
+    exportBytes?.let { bytes ->
+        val name = exportFilename.trim().removeSuffix(".pim").trim()
+        val validName = name.isNotEmpty() && name.length <= 80 && name.none { it < ' ' || it in "\\/:*?\"<>|" }
+        AlertDialog(
+            onDismissRequest = { exportBytes = null },
+            title = { Text(stringResource(ChatSessionRes.string.export_file_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = exportFilename,
+                        onValueChange = { exportFilename = it },
+                        label = { Text(stringResource(ChatSessionRes.string.export_file_name)) },
+                        suffix = { Text(".pim") },
+                        singleLine = true,
+                        isError = !validName,
+                    )
+                    Text(stringResource(if (sessionSaveUsesDownload()) ChatSessionRes.string.export_download_notice else ChatSessionRes.string.export_save_notice))
+                }
+            },
+            dismissButton = { TextButton(onClick = { exportBytes = null }) { Text(stringResource(ChatSessionRes.string.export_cancel)) } },
+            confirmButton = {
+                TextButton(enabled = validName, onClick = {
+                    exportBytes = null
+                    fileBusy = true
+                    // Invoke the browser picker in this click's user-activation scope.
+                    coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                        try {
+                            if (saveSessionFile(bytes, name)) model.showFileResult(getString(ChatSessionRes.string.export_session_success))
+                        } catch (e: CancellationException) { throw e }
+                        catch (e: Exception) { model.showFileResult(getString(ChatSessionRes.string.failed_to_export_session, e.message ?: "")) }
+                        finally { fileBusy = false }
+                    }
+                }) { Text(stringResource(if (sessionSaveUsesDownload()) ChatSessionRes.string.export_download_confirm else ChatSessionRes.string.export_save_confirm)) }
+            },
+        )
+    }
 
     if (fileBusy) AlertDialog(
         onDismissRequest = {},
