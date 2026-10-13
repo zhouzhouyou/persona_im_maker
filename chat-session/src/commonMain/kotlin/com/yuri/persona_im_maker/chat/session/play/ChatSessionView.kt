@@ -15,11 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import codes.chrishorner.personasns.BackgroundParticles
 import codes.chrishorner.personasns.PersonaRed
@@ -29,6 +24,7 @@ import codes.chrishorner.personasns.rememberTranscriptState
 import com.yuri.im.schema.BackgroundParticle
 import com.yuri.im.schema.ChatSession
 import com.yuri.im.schema.ReceiveMessage
+import com.yuri.im.schema.ReplyOptions
 import com.yuri.im.schema.ReceivedMessageSender
 import com.yuri.im.ui.resource.MyResourcePack
 
@@ -44,17 +40,10 @@ fun ChatSessionView(
 
     val focusRequester = remember { FocusRequester() }
 
-    val modifier = Modifier.onPreviewKeyEvent {
-        when {
-            ((it.key == Key.Enter || it.key == Key.Spacebar) && it.type == KeyEventType.KeyUp) -> {
-                transcriptState.advance()
-                true
-            }
-            else -> {
-                false
-            }
-        }
-    }
+    val modifier = Modifier.onPlaybackKey(
+        hasReplyOptions = { transcriptState.entries.lastOrNull()?.message is ReplyOptions },
+        advance = transcriptState::advance,
+    )
 
     LaunchedEffect(focusRequester) {
         focusRequester.requestFocus()
