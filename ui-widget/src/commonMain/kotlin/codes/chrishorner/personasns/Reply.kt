@@ -72,6 +72,10 @@ fun Reply(entry: Entry, modifier: Modifier = Modifier, selectOption: (Int) -> Un
                         selectOption(currentIndex)
                         true
                     }
+                    Key.Spacebar -> {
+                        selectOption(currentIndex)
+                        true
+                    }
                     else -> {
                         false
                     }
